@@ -1,439 +1,267 @@
 ---
 name: hello-auditkit
-description: This skill should be used when the user asks to "audit a plugin", "audit prompts", "review AGENTS.md", "review CLAUDE.md", "audit skills", "review plugin structure", "validate components", "check quality", "analyze hooks/agents/skills/commands", "check against design requirements", "audit templates", "review rules", or needs comprehensive assessment of AI coding assistant configurations, prompt quality, and best practices compliance.
-version: 1.0.1
+description: This skill should be used when the user wants to audit, review, validate, analyze, or check the quality of AI coding assistant configurations. Use this skill for examining prompts, memory files (AGENTS.md, CLAUDE.md, GEMINI.md), skills, plugins, hooks, commands, agents, templates, or rules. This includes any request related to quality assessment, best practices compliance, design review, structure validation, issue detection, or comprehensive evaluation of AI assistant components and configurations.
+version: 2.0.0
 ---
 
 <!-- ============ OUTPUT LANGUAGE CONFIGURATION ============ -->
-<!-- Change the value below to set audit report output language -->
-<!-- Supported: en (English), zh (中文), ja (日本語), ko (한국어), es (Español), fr (Français), de (Deutsch) -->
+<!-- Supported: en-US, zh-CN, zh-TW, ja-JP, ko-KR, es-ES, fr-FR, de-DE -->
 
-**OUTPUT_LANGUAGE: zh**
+**OUTPUT_LANGUAGE: zh-CN**
 
 <!-- ======================================================= -->
 
-> **IMPORTANT**: All audit output MUST be in the language specified by OUTPUT_LANGUAGE above. This includes all section headers, descriptions, issue explanations, and suggestions.
+> **IMPORTANT**: All audit output MUST be in the language specified above.
 
 # Hello-AuditKit: AI Coding Assistant Audit System
 
 ## Overview
 
-Comprehensive audit system for AI coding assistant configurations, supporting multiple content types:
+Comprehensive audit system for AI coding assistant configurations:
 
-| Content Type | Description | Identification |
-|--------------|-------------|----------------|
-| **Prompts** | Standalone LLM prompts | Any text/markdown prompt |
-| **AGENTS.md** | Codex agent instructions | `AGENTS.md` file |
-| **CLAUDE.md** | Claude Code memory files | `CLAUDE.md` file |
-| **GEMINI.md** | Gemini CLI context files | `GEMINI.md` file |
-| **Skills** | Claude/Codex skills | Directory containing `SKILL.md` |
-| **Plugins** | Claude Code plugins | Directory with `.claude-plugin/plugin.json` |
-| **Composite Systems** | Memory file + Skills | `AGENTS.md`/`CLAUDE.md`/`GEMINI.md` + `skills/` |
-
-### Skills Definition
-
-> Source: Codex skill-creator official documentation
-
-**A skill is any directory containing a `SKILL.md` file.** Skills consist of:
-
-```
-skill-name/
-├── SKILL.md (required)
-│   ├── YAML frontmatter: name, description (required)
-│   └── Markdown body: instructions (required)
-└── Bundled Resources (optional)
-    ├── scripts/      - Executable code (Python/Bash/etc.)
-    ├── references/   - Documentation loaded into context as needed
-    └── assets/       - Files used in output (templates, icons, etc.)
-```
-
-**Key points:**
-- `scripts/`: For deterministic, reusable code (e.g., `rotate_pdf.py`)
-- `references/`: For documentation Codex reads when needed (schemas, API docs, domain knowledge)
-- `assets/`: For output resources not loaded into context (templates, images, fonts)
-- References should be one level deep from SKILL.md (avoid nested references)
-- Files >100 lines should have table of contents
-- Do NOT include: README.md, CHANGELOG.md, INSTALLATION_GUIDE.md, etc.
-
-When auditing a directory, recursively find all `SKILL.md` files and audit each skill including its scripts, references, and assets.
-
-## Audit Modes
-
-| Mode | Trigger | Description |
-|------|---------|-------------|
-| **Prompt Mode** | Single prompt file/text | Audit standalone prompts |
-| **AGENTS.md Mode** | `AGENTS.md` file alone | Audit Codex agent instructions |
-| **CLAUDE.md Mode** | `CLAUDE.md` file alone | Audit Claude memory files |
-| **GEMINI.md Mode** | `GEMINI.md` file alone | Audit Gemini context files |
-| **Skills Mode** | Directory containing `SKILL.md` file(s) | Audit all skills found |
-| **Plugin Mode** | Directory with `.claude-plugin/` | Full plugin audit |
-| **Memory + Skills** | `AGENTS.md`/`CLAUDE.md`/`GEMINI.md` + `skills/` | Memory file + skills audit |
-| **Memory + Plugin** | `AGENTS.md`/`CLAUDE.md`/`GEMINI.md` + `.claude-plugin/` | Memory file + plugin audit |
-
-**Auto-detection rules:**
-- Single `.md` file with prompt content → Prompt Mode
-- File named `AGENTS.md`/`CLAUDE.md`/`GEMINI.md` alone → Respective Memory Mode
-- Directory containing any `SKILL.md` → Skills Mode (audit all found)
-- Directory with `.claude-plugin/plugin.json` → Plugin Mode
-- Directory with memory file + `skills/` subdirectory → Memory + Skills
-- Directory with memory file + `.claude-plugin/` → Memory + Plugin
-
-**Important: Content-Based Audit**
-
-Audit is based on the content user provides (file, directory, or pasted text), NOT limited to specific system paths. User may:
-- Provide files copied to any location for review
-- Paste content directly
-- Point to any directory structure
-
-Focus on auditing the **content quality** itself. Path/location checks are informational only - they help understand intended usage but should not fail the audit if content is in a non-standard location.
-
-### Design Requirements Review (Optional)
-
-User can provide original design requirements or PRD document along with ANY audit mode. When provided:
-
-1. **Standard audit** - Perform normal audit based on detected mode
-2. **Design alignment check** - Additionally evaluate:
-   - Does implementation match stated design goals?
-   - Are all intended features implemented?
-   - Are trigger conditions aligned with intended use cases?
-   - Any scope creep (unintended features)?
-   - Any missing capabilities vs design intent?
-
-**How to use**: User provides both:
-- Content to audit (path, directory, or pasted content)
-- Design requirements (brief description, detailed paragraph, or formal PRD)
-
-The audit report will include a "Design Alignment" section comparing implementation against stated requirements.
+| Content Type | Identification | Rule File |
+|--------------|----------------|-----------|
+| **Prompts** | Any text/markdown prompt | `type-prompt.md` |
+| **AGENTS.md** | Codex agent instructions | `type-memory.md` |
+| **CLAUDE.md** | Claude Code memory files | `type-memory.md` |
+| **GEMINI.md** | Gemini CLI context files | `type-memory.md` |
+| **Skills** | Directory with `SKILL.md` | `type-skill.md` |
+| **Plugins** | Directory with `.claude-plugin/` | `type-plugin.md` |
+| **Composite** | Memory file + skills/ | `cross-composite.md` |
 
 ## Core Principles
 
-### Principle 1: Explicit Over Implicit (GPT-5 Best Practice)
+### Principle 1: 4-Point Verification
 
-> Source: GPT-5.2 Prompting Guide
+Before marking ANY issue, verify:
+1. **Concrete Scenario** - Can describe specific failure?
+2. **Design Scope** - Within intended boundaries?
+3. **Flaw vs Choice** - Unintentional error or valid choice?
+4. **Threshold Met** - Above quantified threshold?
 
-- Articulate preferences clearly rather than relying on defaults
-- Use explicit scope, verbosity, and format constraints
-- Favor correctness and grounding; add self-check steps for high-risk outputs
-- "If any instruction is ambiguous, choose the simplest valid interpretation"
+If ANY fails → Discard the issue
 
-### Principle 2: Verbosity Control
+### Principle 2: Occam's Razor
 
-**Default constraints:**
-- Simple responses: ≤2 sentences
-- Standard responses: 3-6 sentences or ≤5 bullets
-- Complex tasks: 1 overview paragraph + ≤5 tagged bullets
+**"If unnecessary, don't add."**
 
-**Scope discipline:**
-- "Implement EXACTLY and ONLY what the user requests"
-- "No extra features, no added components, no UX embellishments"
+Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 
-### Principle 3: Occam's Razor Applied Correctly
+### Principle 3: AI Capability
 
-**Do not add entities without necessity.**
+- AI CAN infer: synonyms, context, standard terms
+- AI CANNOT: 3+ step inference, domain-specific variations
+- If <30% would misunderstand → exempt from issue
 
-- **Don't over-simplify**: Ensure optimized language remains professional, accurate, and complete
-- **Balanced attitude**: Find real issues without false positives
-- **Respect design choices**: Distinguish "design flaws" from "design choices"
-- **Conservative modifications**: Prefer modifying existing rules over adding new ones
+### Principle 4: Size Tolerance
 
-### Principle 4: Progressive Loading Design
-
-| Level | Content | Load Timing | Size Guidance |
-|-------|---------|-------------|---------------|
-| Level 1 | Metadata (name + description) | **Always in context** | ~100 words |
-| Level 2 | Main content (body) | **When triggered** | <500 lines |
-| Level 3 | Bundled resources | **On demand** | Unlimited |
-
-### Principle 5: Hallucination Prevention
-
-- Ask 1-3 clarifying questions OR present 2-3 interpretations with labeled assumptions
-- Use hedging language: "Based on the provided context..." instead of absolutes
-- Never fabricate exact figures or references when uncertain
-- Set missing fields to null rather than guessing
-
-### Principle 6: AI Capability Assumptions
-
-**AI CAN understand**: Common synonyms, clear contextual references, standard terminology
-**AI CANNOT reliably understand**: Cross-section implicit relationships, 3+ step inference chains, domain-specific term variations
-
-**Balance Principle for Issue Identification:**
-1. Identify issues first, then verify if AI capability exempts them
-2. If removing a constraint causes ≥30% of AI executors to misunderstand → Flag as issue
-3. If removing a constraint causes <30% to misunderstand → Can exempt
-4. When uncertain, prefer keeping constraints and mark as "optimization suggestion"
-
-### Principle 7: Platform-Specific Rules
-
-When Claude and Codex specifications conflict, apply the **most appropriate** rule based on:
-1. Target platform (if known)
-2. Best practice alignment
-3. Practical effectiveness
-
-Do NOT flag as issues when both approaches are valid.
-
-## Content-Specific Audit Rules
-
-### Prompt Audit Rules
-
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| Verbosity constraints | Explicit length limits | Warning |
-| Scope boundaries | Clear "do not" constraints | Warning |
-| Ambiguity handling | Instructions for unclear cases | Info |
-| Output format | Specified structure | Warning |
-| Grounding | "Based on context" hedging | Info |
-
-### AGENTS.md Audit Rules
-
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| Merge hierarchy | Respects top-down merge (global → repo → cwd) | Info |
-| Instruction clarity | Clear, actionable instructions | Warning |
-| Scope appropriateness | Instructions match file location scope | Warning |
-| No conflicts | No contradictory instructions across levels | Severe |
-
-### CLAUDE.md Audit Rules
-
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| Memory type location | Correct location for memory type | Info (advisory) |
-| Import syntax | Valid `@path/to/file` imports | Fatal |
-| Path-specific rules | Valid YAML frontmatter with `paths` field | Severe |
-| Bullet format | Uses bullet points and markdown headings | Info |
-| Specificity | Specific instructions, not vague | Warning |
-
-### GEMINI.md Audit Rules
-
-> Source: Gemini CLI official documentation
-
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| File hierarchy | Correct hierarchy (global/project/subdirectory) | Info (advisory) |
-| Import syntax | Valid `@file.md` imports (relative or absolute) | Fatal |
-| Markdown format | Standard markdown with headings, lists, code blocks | Info |
-| Instruction clarity | Clear, actionable instructions | Warning |
-| Specificity | Specific instructions, not vague | Warning |
-| No conflicts | No contradictory instructions across hierarchy | Severe |
-
-**GEMINI.md hierarchy:**
-1. Global: `~/.gemini/GEMINI.md`
-2. Project root/ancestors: Up to `.git` folder
-3. Subdirectories: Below current directory (respects `.gitignore`)
-
-### Skill Audit Rules (Claude + Codex Unified)
-
-**Skill as a Whole** (audit entire skill directory):
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| SKILL.md exists | Required in skill root | Fatal |
-| Directory structure | scripts/, references/, assets/ if used | Info |
-| No extraneous files | No README.md, CHANGELOG.md, etc. | Warning |
-| All references accessible | Files in references/ exist and readable | Severe |
-| All scripts valid | Scripts in scripts/ are executable, have proper shebang | Warning |
-| Reference depth | References one level deep (no nested references) | Warning |
-| Large files have TOC | Files >100 lines have table of contents | Info |
-
-**SKILL.md Content**:
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| File name | `SKILL.md` (case-sensitive) | Fatal |
-| name field | ≤64 chars, lowercase letters, digits, hyphens | Severe |
-| description field | Required, ≤1024 chars (≤500 recommended), includes when skill should trigger | Severe |
-| Body length | ≤500 lines, <5k words ideal; >750 lines needs optimization | Warning |
-| References documented | SKILL.md describes when to read each reference file | Warning |
-| allowed-tools | Valid tool names if specified | Severe |
-
-**Scripts Audit** (for each script in scripts/):
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| Shebang line | Present and correct | Warning |
-| Error handling | Proper error handling (set -e or try/except) | Warning |
-| Referenced in SKILL.md | Script usage documented | Info |
-
-**References Audit** (for each file in references/):
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| Referenced in SKILL.md | Clear "when to read" instructions | Warning |
-| No duplication | Info not duplicated in SKILL.md | Info |
-| TOC for large files | Files >100 lines have table of contents | Info |
-
-**Cross-Skill Checks** (when multiple skills in directory):
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| No trigger conflicts | Skills have distinct trigger conditions | Warning |
-| Shared resources | All skills can access shared scripts/files | Severe |
-| Cross-references | Valid paths between skills | Severe |
-
-### Plugin Audit Rules (Claude Code)
-
-> Audit entire plugin directory as a whole, including all component types
-
-**Plugin Structure** (directory level):
-```
-my-plugin/
-├── .claude-plugin/
-│   └── plugin.json (required - manifest)
-├── commands/        - Slash commands (.md files)
-├── agents/          - Subagent definitions (.md files)
-├── skills/          - Skills (directories with SKILL.md)
-├── hooks/
-│   └── hooks.json   - Hook configurations
-├── .mcp.json        - MCP server definitions
-├── .lsp.json        - LSP server configurations
-├── scripts/         - Utility scripts
-├── rules/           - Rule files (.md)
-└── templates/       - Template files
-```
-
-**Plugin-Level Checks**:
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| plugin.json exists | In `.claude-plugin/` directory | Fatal |
-| plugin.json valid | Valid JSON, required fields present | Fatal |
-| name format | kebab-case | Severe |
-| Component dirs at root | Not inside `.claude-plugin/` | Fatal |
-| Path references | Use `${CLAUDE_PLUGIN_ROOT}` | Severe |
-
-**Component-Level Checks** (audit each by its own rules):
-| Component | Location | Audit Rules |
-|-----------|----------|-------------|
-| Commands | `commands/*.md` | Command audit rules |
-| Agents | `agents/*.md` | Agent audit rules |
-| Skills | `skills/*/SKILL.md` | Skill audit rules (full skill audit) |
-| Hooks | `hooks/hooks.json` | Hook audit rules |
-| MCP Servers | `.mcp.json` | MCP audit rules |
-| LSP Servers | `.lsp.json` | LSP audit rules |
-| Scripts | `scripts/*` | Script audit rules |
-| Rules | `rules/*.md` | Prompt/rule audit rules |
-
-**Cross-Component Checks**:
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| All references valid | Commands→agents, agents→skills, etc. | Severe |
-| hooks.json format | `{"hooks": {...}}` wrapper | Fatal |
-| Script references | All referenced scripts exist | Fatal |
-| Naming consistency | Consistent across all components | Warning |
-
-### Composite System Audit Rules
-
-| Check | Requirement | Severity |
-|-------|-------------|----------|
-| AGENTS.md + skills consistency | No conflicting instructions | Severe |
-| Script references | All referenced scripts exist | Fatal |
-| Script quality | Proper shebang, error handling | Warning |
-| Cross-file references | Valid paths, no broken links | Severe |
-| Naming consistency | Consistent naming across files | Warning |
-
-## Audit Dimensions (Priority Order)
-
-| Priority | Dimension | Description |
-|----------|-----------|-------------|
-| 0 | Structure | File/directory structure, naming conventions |
-| 0.1 | Cross-Component Consistency | References, naming across files |
-| 1 | Fatal Issues | Logic contradictions, missing critical components |
-| 2 | Severe Issues | Unclear descriptions, broken references |
-| 3 | Semantic Ambiguity | Inconsistent terminology |
-| 4 | Expression Standards | Redundancy, formatting |
-| 4.1 | Conciseness | Unnecessary explanations |
-| 4.2 | Freedom Level Mismatch | Over/under-constrained |
-| 5 | Structure Issues | Organization, hierarchy |
-| 6 | Robustness | Error handling, edge cases |
-| 7 | Optimization Suggestions | Optional improvements |
-| 7.1 | LLM Prompting Best Practices | GPT-5 guidelines compliance |
-| 8 | Architecture Review | Optional, on request |
+| Range | Status |
+|-------|--------|
+| ≤500 lines | Ideal |
+| 500-550 (≤10% over) | **NOT an issue** |
+| 550-625 (10-25% over) | Info only |
+| 625-750 (>25% over) | Warning |
+| >750 lines | Severe |
 
 ## Audit Execution
 
-### Step 1: Content Type Detection
+> **CRITICAL**: Each step below is MANDATORY. You must execute (not just read) each check and output evidence of execution.
 
-1. Scan provided path/content
-2. Identify content type (Prompt/AGENTS.md/CLAUDE.md/Skill/Plugin/Composite)
-3. Confirm audit mode with user
-4. For Composite Mode, list all detected components
+### Step 1: Detection & Classification
 
-### Step 2: Comprehensive Scan
+Scan path → identify type → load appropriate rules:
 
-**For Composite Mode (AGENTS.md + Skills + Scripts):**
-1. Scan AGENTS.md structure and content
-2. Scan each skill in skills/ directory
-3. Scan all scripts (*.sh, *.py, etc.)
-4. Check cross-component consistency
-5. Infer design intent
-6. Apply general dimensions (1-8)
+```
+Prompt       → type-prompt.md
+Memory file  → type-memory.md
+Skill        → type-skill.md
+Plugin       → type-plugin.md
+Composite    → Apply all + cross-*.md
+```
 
-**For other modes:** Apply content-specific rules + general dimensions
+### Step 2: Execute Universal Checks (ALL TYPES)
 
-### Step 3: Issue Verification (4-Point Checklist)
+**Every audit MUST execute these checks from `rules-universal.md`:**
 
-For each suspected issue:
-1. **Concrete Scenario Test**: Does this cause clear negative consequences?
-2. **Design Scope Verification**: Is this within design scope?
-3. **Design Intent Judgment**: Is this a flaw or a choice?
-4. **Severity Assessment**: Does it meet threshold?
+| Category | Action Required | Evidence Output |
+|----------|-----------------|-----------------|
+| Naming & Numbering | Extract ALL: (1) naming conventions (kebab-case, no special chars), (2) numbered sequences → verify sequential, no duplicates, no gaps, (3) order validation → section order logical, heading hierarchy H1→H2→H3 | "Checked N sequences, M naming issues, K order issues" |
+| Reference Integrity | Extract ALL references (file refs, anchor links, numbered refs like R1/Step 2) → verify each target exists, no circular refs | "Checked N refs, M broken, K circular" |
+| Structure & Organization | (1) TOC-content match, (2) section categorization correct, (3) template compliance (required sections present, order correct), (4) no orphan sections | "TOC: N entries vs M headings, K mismatches; Template: L issues" |
+| Diagram & Flowchart | If exists: (1) node-text consistency, (2) all paths have endpoints, (3) no infinite loops, (4) decision branches complete | "Checked N diagrams, M consistency issues, K logic issues" |
+| Language Expression | (1) Ambiguity patterns (may/might/could without condition), (2) terminology consistency (same concept = same term), (3) spelling errors in identifiers/headings, (4) redundant content | "Found N ambiguity, M terminology, K spelling, L redundancy issues" |
+| Security & Compliance | Check for hardcoded secrets, paths, credentials; input validation rules | "Checked, N security issues" |
+| Size Thresholds | Count lines per file, apply tiered thresholds (≤500 ideal, >750 severe) | "File X: N lines (status)" |
+| Rule Logic | If rules exist: (1) no conflicts, (2) no duplicates/semantic equivalents, (3) coverage complete, (4) optimization opportunities (DELETE > MERGE > MODIFY) | "Checked N rules: M conflicts, K duplicates, L gaps" |
+| Process Logic | If process/flow defined: (1) all scenarios covered, (2) main flow clear, (3) no dead loops, (4) no conflicting invocations | "Process: N scenarios, M flow issues" |
+| Output & i18n | If output format defined: (1) format specification complete, (2) language control correct (if i18n configured), (3) no hardcoded language-specific content | "Output: N format issues, M i18n issues" |
 
-### Step 4: Generate Report
+**Numbering Check Execution** (commonly missed):
+1. Find all numbered lists (1. 2. 3. or Step 0, Step 1, etc.)
+2. Verify: sequential? no duplicates? no gaps?
+3. Find all TOC entries → verify each has matching heading
+4. Cross-section: if steps span sections (Step 0 here, Step 3 there), verify continuity
 
-- Output in configured language
-- Create file(s) if report exceeds ~300 lines
-- Include fix suggestions with Before/After comparisons
+### Step 3: Execute Type-Specific Checks
 
-## Output Format
+**Based on content type, execute ALL checks in the relevant file:**
 
-Read `references/output-format-core.md` and `references/output-format-issues.md` for complete specifications.
+#### For Prompts (`type-prompt.md`):
+| Check Category | Action |
+|----------------|--------|
+| Structure Validation | Verbosity constraints? Scope boundaries? Output format? |
+| Content Quality | Specific instructions? Not vague? |
+| LLM Best Practices | Freedom level match? Grounding? Ambiguity handling? |
+| Audit Checklist | Execute all Fatal/Severe/Warning checks at end of file |
 
-**Language**: Output in the language specified by `OUTPUT_LANGUAGE` at the top of this file.
+#### For Memory Files (`type-memory.md`):
+| Check Category | Action |
+|----------------|--------|
+| Structure Validation | File location? Merge hierarchy? |
+| Import Syntax | Valid `@path` imports? |
+| Content Quality | Specific? Actionable? Not vague? |
+| Instruction Quality | Verbosity constraints? Scope boundaries? |
 
-**File Output**: If report exceeds ~300 lines, create file(s). See `references/output-format-core.md` for naming rules.
+#### For Skills (`type-skill.md`):
+| Check Category | Action |
+|----------------|--------|
+| Directory Validation | SKILL.md exists? Correct filename? |
+| Frontmatter | name, description, triggers present? |
+| Body Size | Apply tiered thresholds (≤500 ideal, >750 severe) |
+| Script Integrity | Declared scripts exist? Imports valid? Shebang? Error handling? |
+| References | Has "when to read" guidance? |
+
+#### For Plugins (`type-plugin.md`):
+| Check Category | Action |
+|----------------|--------|
+| Structure | plugin.json in .claude-plugin/? Components at root? |
+| Path Variables | Uses relative paths or env variables? No hardcoded absolute paths? |
+| Commands | Valid frontmatter? allowed-tools valid? |
+| Agents | name, description, tools valid? |
+| Hooks | Wrapper format? Valid matchers? Scripts exist? |
+| MCP/LSP | Valid JSON? Paths correct? No hardcoded secrets? |
+
+### Step 4: Execute Cross-Cutting Checks (Multi-file Systems)
+
+**For Skills, Plugins, Composites, execute ALL checks from:**
+
+#### From `cross-design-coherence.md`:
+| Check | Action |
+|-------|--------|
+| Full Directory Scan | Enumerate ALL files, classify each, build rule inventory |
+| Design Philosophy | Extract principles from all files, check consistency |
+| Rule Propagation | Global rules applied in local files? |
+| Conflict Detection | Same-file contradictions? Cross-file contradictions? |
+| Structural Redundancy | Repeated sections? Duplicate tables? Parallel content? → centralize |
+| Red Flags | God files (>750 lines)? Scattered rules (>3 files)? Circular deps? |
+
+#### From `cross-progressive-loading.md`:
+| Check | Action |
+|-------|--------|
+| Content Level Audit | L1 ≤100 words? L2 ≤500 lines? L3 ≤500/file? |
+| Content Placement | Core workflow in L2? Edge cases in L3? |
+| Reference Guidance | Each reference has "when to read"? |
+| Anti-Patterns | Metadata bloat? Monolithic body? Essential in L3? |
+
+#### From `cross-composite.md`:
+| Check | Action |
+|-------|--------|
+| Reference Integrity | All cross-file refs valid? |
+| Terminology Consistency | Same concept = same term across files? |
+| Numbering Consistency | Sequential across all files? No duplicates? |
+| Script Integrity | All declared scripts exist? Imports valid? |
+
+### Step 5: Issue Verification (4-Point Check)
+
+For each suspected issue, verify ALL 4 points:
+1. **Concrete scenario** - Can describe specific failure?
+2. **Design scope** - Within intended boundaries?
+3. **Flaw vs choice** - Unintentional error or valid design?
+4. **Threshold met** - Above quantified threshold?
+
+If ANY fails → Discard the issue (move to Filtered)
+
+### Step 6: Generate Report
+
+Follow `references/ref-output-format.md` for structure.
+
+**Section 2 Cross-Cutting Analysis MUST include:**
+- Naming & Numbering: actual check results with specific findings
+- TOC-Content Match: comparison results
+- Reference Integrity: broken refs listed
+- (For multi-file) Design Coherence, Progressive Loading results
+
+**Section 3 Issue Inventory MUST include:**
+- Verification Statistics: "Scanned X → Verified Y → Filtered Z"
+- Both Confirmed and Filtered issues with filter reasons
 
 ## Reference Files
 
-1. **`references/plugin-structure-spec.md`** - Plugin structure specifications
-2. **`references/memory-file-rules.md`** - Prompts, AGENTS.md, CLAUDE.md, GEMINI.md audit rules
-3. **`references/component-audit-rules.md`** - Commands, Agents, Skills audit rules
-4. **`references/plugin-hooks-rules.md`** - Plugin System, Hooks, Hook Scripts audit rules
-5. **`references/mcp-lsp-rules.md`** - MCP Servers, LSP Servers audit rules
-6. **`references/cross-audit-rules.md`** - Design Requirements, Cross-Component, Composite System audit rules
-7. **`references/audit-verification-principles.md`** - Issue verification checklist and AI capability assumptions
-8. **`references/audit-checklist-dimensions.md`** - Dimension 0-8 audit checklist with severity levels
-9. **`references/audit-checklist-examples.md`** - Examples of what should/should not be flagged
-10. **`references/output-format-core.md`** - Output format: language, structure, component templates
-11. **`references/output-format-issues.md`** - Output format: issues, summary, user confirmation
-12. **`references/output-format-special.md`** - Special outputs (design alignment, terminology, architecture)
-13. **`references/prompt-best-practices.md`** - GPT-5 and LLM prompting best practices
+### Layer 0: Core Methodology (永恒不变)
+
+Read `references/methodology-core.md` when:
+- Need to verify if something is truly an issue
+- Deciding fix priority
+- Understanding AI capability boundaries
+
+### Layer 1: Universal Rules (通用规则)
+
+Read `references/rules-universal.md` when:
+- Starting any audit
+- Need Should Flag / Should NOT Flag patterns
+- Checking size thresholds
+
+### Layer 2: Type-Specific Rules (类型规则)
+
+| File | Read When |
+|------|-----------|
+| `references/type-prompt.md` | Auditing standalone prompts |
+| `references/type-memory.md` | Auditing AGENTS.md, CLAUDE.md, GEMINI.md |
+| `references/type-skill.md` | Auditing skills (SKILL.md, scripts) |
+| `references/type-plugin.md` | Auditing plugins, hooks, MCP, LSP |
+
+### Layer 3: Cross-Cutting Rules (跨切规则)
+
+| File | Read When |
+|------|-----------|
+| `references/cross-composite.md` | Auditing multi-component systems |
+| `references/cross-design-coherence.md` | Checking design consistency |
+| `references/cross-progressive-loading.md` | Evaluating content placement |
+
+### Layer 4: Reference Materials (参考资料)
+
+| File | Read When |
+|------|-----------|
+| `references/ref-output-format.md` | Generating audit report |
+| `references/ref-checklist.md` | Need dimension checklist |
+| `references/ref-quick-reference.md` | Quick lookup of patterns |
 
 ## Special Reminders
 
-**Avoid False Positives**
-- Don't flag valid design choices as issues
-- Don't assume rules that don't exist
-- Respect platform differences (Claude vs Codex)
+### Key References by Topic
 
-**Avoid Over-interpretation**
-- Don't treat simplification as omission
-- Don't treat flexibility as ambiguity
-- Don't treat style differences as inconsistency
+| Topic | Reference File |
+|-------|---------------|
+| Report structure & format | `ref-output-format.md` |
+| Issue filtering rules | `rules-universal.md` → Should NOT Flag |
+| False positive prevention | `rules-universal.md` → Verification Questions |
+| Size thresholds | `rules-universal.md` → Universal Size Thresholds |
+| Checklist by dimension | `ref-checklist.md` |
 
-**Platform Compatibility**
-- When auditing skills, apply unified best practices
-- Don't flag Claude-specific or Codex-specific patterns as errors
-- Focus on practical effectiveness over strict compliance
+### Quick Filtering Rules
 
-## Reference Documentation
+| Condition | Action |
+|-----------|--------|
+| ≤10% over recommended | NOT an issue |
+| AI can infer | NOT an issue |
+| Design choice | NOT an issue |
 
-**Prompt Engineering:**
-- [OpenAI Cookbook](https://github.com/openai/openai-cookbook)
-- [OpenAI Platform Docs](https://platform.openai.com/docs)
-- [Anthropic Documentation](https://docs.anthropic.com)
-- [Google AI Documentation](https://ai.google.dev/docs)
+## External Documentation
 
-**Codex CLI:**
-- [Codex CLI Repository](https://github.com/openai/codex)
-- [Codex CLI Docs](https://github.com/openai/codex/tree/main/docs)
-
-**Claude Code:**
-- [Claude Code Repository](https://github.com/anthropics/claude-code) - Official source for plugins, hooks, MCP, agents
-- [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
-
-**Gemini CLI:**
-- [Gemini CLI Repository](https://github.com/google-gemini/gemini-cli)
-- [Gemini CLI Docs](https://github.com/google-gemini/gemini-cli/tree/main/docs)
+| Platform | Source |
+|----------|--------|
+| Claude Code | github.com/anthropics/claude-code |
+| Codex CLI | github.com/openai/codex/tree/main/codex-cli |
+| Gemini CLI | github.com/google-gemini/gemini-cli |
+| Anthropic Docs | docs.anthropic.com |
+| OpenAI Docs | github.com/openai/openai-cookbook |
