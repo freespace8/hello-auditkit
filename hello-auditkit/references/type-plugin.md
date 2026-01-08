@@ -156,6 +156,8 @@ You'll receive a report.
 
 ### Command Prompt Quality
 
+> **Full GPT-5.2 checks**: See `rules-universal.md` → LLM Prompting Best Practices (GPT-5.2)
+
 | Check | Requirement | Severity |
 |-------|-------------|----------|
 | Clear task | Specific, actionable instruction | Severe |
@@ -163,6 +165,8 @@ You'll receive a report.
 | Scope boundaries | What NOT to do | Warning |
 | Freedom level match | Constraints fit task fragility | Warning |
 | No AI-known content | Don't explain standard concepts | Info |
+| Tool preference | Prefer tools over internal knowledge | Warning |
+| Agentic updates | Brief updates at major phases (if agentic) | Warning |
 
 ---
 
@@ -205,6 +209,8 @@ assistant: "[Response]"
 
 ### Agent Body Quality (LLM Best Practices)
 
+> **Full GPT-5.2 checks**: See `rules-universal.md` → LLM Prompting Best Practices (GPT-5.2)
+
 | Check | Requirement | Severity |
 |-------|-------------|----------|
 | Clear role | Specific agent purpose | Severe |
@@ -214,6 +220,10 @@ assistant: "[Response]"
 | Tool usage guidance | When to use which tools | Info |
 | Freedom level match | Constraint level fits task | Warning |
 | Conciseness | No redundant explanations | Warning |
+| Tool preference | Prefer tools over internal knowledge | Warning |
+| Agentic updates | Brief updates at major phases, concrete outcomes | Warning |
+| No task expansion | Don't expand beyond user request | Warning |
+| Long-context outline | For >10k tokens: outline, restatement | Warning |
 
 ---
 

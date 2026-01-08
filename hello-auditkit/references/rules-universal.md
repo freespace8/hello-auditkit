@@ -66,6 +66,13 @@ User may:
 | Grounding | "Based on context" for uncertain claims | Warning | Data extraction |
 | Self-check | Verification step for high-risk outputs | Warning | Legal/financial/security |
 | Output schema | JSON structure or format specification | Warning | Structured output |
+| Tool preference | Prefer tools over internal knowledge for fresh/user-specific data | Warning | Tool-using content |
+| Tool parallelization | Parallelize independent read operations | Info | Tool-using content |
+| Write confirmation | After writes, restate: what changed, where, validation performed | Warning | Tool-using content |
+| Agentic updates | Brief updates (1-2 sentences) at major phases only, concrete outcomes | Warning | Agent/agentic content |
+| No task expansion | Don't expand beyond user request; flag optional work | Warning | Agent/agentic content |
+| Long-context outline | For >10k tokens: internal outline, constraint restatement, section refs with quotes | Warning | Long content |
+| Structured null handling | Missing fields → null, not guessed; re-scan before return | Warning | Structured output |
 
 ### Freedom Level Matching
 
@@ -213,6 +220,21 @@ User may:
 | Defined domain terms | Technical terms explained | Info |
 | Consistent verb forms | Same verbs for same actions | Warning |
 | Consistent formatting | Same style for same elements | Warning |
+
+### Wording Patterns (GPT-5.2)
+
+> **Source**: GPT-5.2 Prompting Guide - specific wording recommendations
+
+| Check | GPT-5.2 Recommended Pattern | Severity |
+|-------|----------------------------|----------|
+| Hedging language | Use "Based on provided context..." for uncertain claims, not absolute statements | Warning |
+| Avoid absolutes | Avoid "always", "guaranteed", "never" without qualification; use "typically", "generally" | Warning |
+| Scope constraint wording | Use "EXACTLY and ONLY what requested", explicit "Do NOT" lists | Warning |
+| Ambiguity handling wording | "If unclear: provide 1-3 clarifying questions OR 2-3 interpretations with assumption labels" | Warning |
+| No fabrication wording | Include "Never fabricate exact figures, line numbers, or external references" for factual content | Severe |
+| Verbosity constraint wording | Explicit limits like "≤N sentences", "≤N bullets", not vague "be concise" | Warning |
+
+**Audit approach**: Check if instructions use GPT-5.2 recommended wording patterns. Flag when vague or absolute language is used where qualified language is appropriate.
 
 ---
 

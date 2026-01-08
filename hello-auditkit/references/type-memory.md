@@ -210,6 +210,7 @@ Files loaded and concatenated in order:
 
 ### Instruction Quality (LLM Best Practices)
 
+> **Full GPT-5.2 checks**: See `rules-universal.md` → LLM Prompting Best Practices (GPT-5.2)
 > **Detailed practices**: See `type-prompt.md` → LLM Prompting Best Practices
 
 | Check | Requirement | Severity |
@@ -221,6 +222,9 @@ Files loaded and concatenated in order:
 | Freedom level match | Constraints match task fragility | Warning |
 | Specific instructions | Actionable, not vague | Warning |
 | No contradictions | No conflicting rules | Severe |
+| Tool preference | Prefer tools over internal knowledge (if tool-using) | Warning |
+| Agentic updates | Brief updates at major phases (if agentic) | Warning |
+| Long-context outline | For >10k tokens: outline, restatement | Warning |
 
 ### Best Practices
 

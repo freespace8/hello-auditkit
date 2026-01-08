@@ -274,12 +274,18 @@ See references/ for more information.
 ### AI Executor Awareness
 
 > **Full details**: See `methodology-core.md` → AI Capability Model
+> **Full GPT-5.2 checks**: See `rules-universal.md` → LLM Prompting Best Practices (GPT-5.2)
 
 | Check | Rule | Severity |
 |-------|------|----------|
 | Avoid over-specification | Don't specify what AI can infer | Warning |
 | Use semantic labels | `{error_message}` vs `"Error occurred"` | Warning |
 | Trust AI judgment | Guidelines over rigid rules | Info |
+| Verbosity constraints | Explicit output length limits | Warning |
+| Scope boundaries | Clear "do not" constraints | Warning |
+| Tool preference | Prefer tools over internal knowledge | Warning |
+| Agentic updates | Brief updates at major phases (if agentic) | Warning |
+| Long-context outline | For >10k tokens: outline, restatement | Warning |
 
 ### When Hardcoding is Acceptable
 

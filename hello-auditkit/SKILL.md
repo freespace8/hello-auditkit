@@ -101,13 +101,13 @@ Composite    → Apply all + cross-*.md
 | Reference Integrity | Extract ALL references (file refs, anchor links, numbered refs like R1/Step 2) → verify each target exists, no circular refs | "Checked N refs, M broken, K circular" |
 | Structure & Organization | (1) TOC-content match, (2) section categorization correct, (3) template compliance (required sections present, order correct), (4) no orphan sections | "TOC: N entries vs M headings, K mismatches; Template: L issues" |
 | Diagram & Flowchart | If exists: (1) node-text consistency, (2) all paths have endpoints, (3) no infinite loops, (4) decision branches complete | "Checked N diagrams, M consistency issues, K logic issues" |
-| Language Expression | (1) Ambiguity patterns (may/might/could without condition), (2) terminology consistency (same concept = same term), (3) spelling errors in identifiers/headings, (4) redundant content | "Found N ambiguity, M terminology, K spelling, L redundancy issues" |
+| Language Expression | (1) Ambiguity patterns (may/might/could without condition), (2) terminology consistency (same concept = same term), (3) spelling errors in identifiers/headings, (4) redundant content, (5) GPT-5.2 wording patterns (hedging language, avoid absolutes, scope constraint wording, verbosity constraint wording) | "Found N ambiguity, M terminology, K spelling, L redundancy, P wording issues" |
 | Security & Compliance | Check for hardcoded secrets, paths, credentials; input validation rules | "Checked, N security issues" |
 | Size Thresholds | SKILL.md body: apply tiered thresholds (≤500 ideal). Reference files: evaluate by content nature | "SKILL.md: N lines (status)" |
 | Rule Logic | If rules exist: (1) no conflicts, (2) no duplicates/semantic equivalents, (3) coverage complete, (4) optimization opportunities (DELETE > MERGE > MODIFY) | "Checked N rules: M conflicts, K duplicates, L gaps" |
 | Process Logic | If process/flow defined: (1) all scenarios covered, (2) main flow clear, (3) no dead loops, (4) no conflicting invocations | "Process: N scenarios, M flow issues" |
 | Output & i18n | If output format defined: (1) format specification complete, (2) language control correct (if i18n configured), (3) no hardcoded language-specific content | "Output: N format issues, M i18n issues" |
-| GPT-5.2 Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims | "GPT-5.2: N verbosity, M scope, K grounding issues" |
+| GPT-5.2 Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims, (6) Tool preference over internal knowledge, (7) Agentic updates brief with concrete outcomes, (8) Long-context outline for >10k tokens | "GPT-5.2: N verbosity, M scope, K grounding, L tool, P agentic issues" |
 
 **Numbering Check Execution** (commonly missed):
 1. Find all numbered lists (1. 2. 3. or Step 0, Step 1, etc.)
