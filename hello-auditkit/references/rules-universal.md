@@ -49,20 +49,23 @@ User may:
 
 ## Universal Prompt Quality Rules
 
-> **Execution Required**: For ALL content containing AI instructions (prompts, skills, agents, commands), verify each check below.
+> **Execution Required**: For ALL content containing AI instructions, verify each check below.
+> **Detailed guidance**: See `type-prompt.md` → LLM Prompting Best Practices
 
-**Applies to**: All content containing instructions for AI execution
-- Prompts, Memory files, Skill bodies, Command bodies, Agent bodies, Hook prompts
+**Applies to**: Prompts, Memory files, Skill bodies, Command bodies, Agent bodies, Hook prompts
 
-### LLM Prompting Best Practices
+### LLM Prompting Best Practices (GPT-5.2)
 
 | Check | Requirement | Severity | Applies To |
 |-------|-------------|----------|------------|
-| Verbosity constraints | Explicit output length limits | Warning | All prompts |
-| Scope boundaries | Clear "do not" constraints | Warning | All instructions |
-| Ambiguity handling | Instructions for unclear cases | Info | Complex tasks |
+| Verbosity constraints | Explicit output length limits (e.g., "≤3 sentences", "≤5 bullets") | Severe | All prompts |
+| Scope boundaries | Clear "do not" constraints, explicit exclusions | Severe | All instructions |
+| No fabrication | "Never fabricate..." instruction for factual content | Severe | Data extraction |
+| Ambiguity handling | Instructions for unclear cases (clarify OR interpret) | Warning | Complex tasks |
 | No AI-known content | Don't explain standard concepts | Warning | All |
-| Grounding | "Based on context" for uncertain claims | Info | Data extraction |
+| Grounding | "Based on context" for uncertain claims | Warning | Data extraction |
+| Self-check | Verification step for high-risk outputs | Warning | Legal/financial/security |
+| Output schema | JSON structure or format specification | Warning | Structured output |
 
 ### Freedom Level Matching
 

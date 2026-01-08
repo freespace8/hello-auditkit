@@ -366,12 +366,12 @@
 
 | Check | Expected | Severity |
 |-------|----------|----------|
-| Specific task description | Yes | Severe |
-| Section delimiters | Yes | Warning |
-| Length constraints | Yes | Warning |
-| Explicit scope | Yes | Warning |
-| Reference text for accuracy | Yes | Warning |
-| No fabrication | Yes | Severe |
+| Verbosity constraints | Explicit length limits | Severe |
+| Scope boundaries | "Do not" constraints present | Severe |
+| No fabrication instruction | "Never fabricate..." | Severe |
+| Output schema (structured) | JSON structure defined | Warning |
+| Grounding language | "Based on context" | Warning |
+| Self-check (high-risk) | Verification step | Warning |
 
 ### Dimension 8: Architecture (Optional)
 

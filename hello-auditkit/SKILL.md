@@ -31,6 +31,8 @@ Comprehensive audit system for AI coding assistant configurations:
 
 ## Core Principles
 
+> **Source**: Based on GPT-5.2 Prompting Guide (openai-cookbook)
+
 ### Principle 1: 4-Point Verification
 
 Before marking ANY issue, verify:
@@ -65,6 +67,14 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 
 > **Note**: Reference files have no official line limit. Evaluate based on content nature.
 
+### Principle 5: GPT-5.2 Compliance
+
+**For prompts/instructions, verify GPT-5.2 critical checks** (see `type-prompt.md` → GPT-5.2 Compliance Checks):
+- Verbosity constraints (Severe)
+- Scope boundaries with "do not" list (Severe)
+- No fabrication instruction (Severe)
+- Output schema for structured tasks (Warning)
+
 ## Audit Execution
 
 > **CRITICAL**: Each step below is MANDATORY. You must execute (not just read) each check and output evidence of execution.
@@ -97,6 +107,7 @@ Composite    → Apply all + cross-*.md
 | Rule Logic | If rules exist: (1) no conflicts, (2) no duplicates/semantic equivalents, (3) coverage complete, (4) optimization opportunities (DELETE > MERGE > MODIFY) | "Checked N rules: M conflicts, K duplicates, L gaps" |
 | Process Logic | If process/flow defined: (1) all scenarios covered, (2) main flow clear, (3) no dead loops, (4) no conflicting invocations | "Process: N scenarios, M flow issues" |
 | Output & i18n | If output format defined: (1) format specification complete, (2) language control correct (if i18n configured), (3) no hardcoded language-specific content | "Output: N format issues, M i18n issues" |
+| GPT-5.2 Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims | "GPT-5.2: N verbosity, M scope, K grounding issues" |
 
 **Numbering Check Execution** (commonly missed):
 1. Find all numbered lists (1. 2. 3. or Step 0, Step 1, etc.)
@@ -114,6 +125,7 @@ Composite    → Apply all + cross-*.md
 | Structure Validation | Verbosity constraints? Scope boundaries? Output format? |
 | Content Quality | Specific instructions? Not vague? |
 | LLM Best Practices | Freedom level match? Grounding? Ambiguity handling? |
+| GPT-5.2 Compliance | Verbosity limits? "Do not" list? No fabrication? Schema? Self-check? |
 | Audit Checklist | Execute all Fatal/Severe/Warning checks at end of file |
 
 #### For Memory Files (`type-memory.md`):
@@ -250,6 +262,7 @@ Read `references/rules-universal.md` when:
 | False positive prevention | `rules-universal.md` → Verification Questions |
 | Size thresholds | `rules-universal.md` → Universal Size Thresholds |
 | Checklist by dimension | `ref-checklist.md` |
+| GPT-5.2 / LLM best practices | `type-prompt.md` → LLM Prompting Best Practices |
 
 ### Quick Filtering Rules
 
@@ -268,3 +281,4 @@ Read `references/rules-universal.md` when:
 | Gemini CLI | github.com/google-gemini/gemini-cli |
 | Anthropic Docs | docs.anthropic.com |
 | OpenAI Docs | github.com/openai/openai-cookbook |
+| GPT-5.2 Prompting Guide | github.com/openai/openai-cookbook/blob/main/examples/gpt-5/gpt-5-2_prompting_guide.ipynb |
