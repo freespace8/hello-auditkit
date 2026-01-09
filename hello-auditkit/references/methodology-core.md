@@ -1,5 +1,11 @@
 # Audit Methodology Core
 
+> **Dual Application**: The principles in this document serve TWO purposes:
+> 1. **As audit standards**: When auditing other skills, check if they follow these principles
+> 2. **As self-compliance**: This audit system itself follows these principles
+>
+> When auditing, verify that the audited content adheres to: Occam's Razor, AI Capability awareness, Fix Priority (DELETE > ADD), and necessity-based additions.
+
 ## Table of Contents
 
 - [4-Point Core Verification](#4-point-core-verification)
@@ -30,7 +36,43 @@
 |----------|---------------|
 | Is this scenario within the design scope? | Exclude extreme edge cases, theoretical possibilities |
 | If NO → Not an issue, discard | |
-| If YES → Continue to Check 3 | |
+| If YES → Continue to Check 2b | |
+
+**CRITICAL**: Before applying any audit rule, first understand the audited content's:
+- **Core purpose**: What is it designed to do?
+- **Design principles**: What trade-offs did the author make?
+- **Domain characteristics**: Does the domain require special considerations?
+
+Only then judge whether the audit rule applies to this specific content.
+
+### Check 2b: Functional Capability Audit
+
+**CRITICAL PREREQUISITE**: Before evaluating functional capability, the auditor MUST first understand the target domain. For domain-specific skills, acquire domain knowledge (via WebSearch, references, or user input) before assessment.
+
+**For any content that generates outputs or performs tasks, evaluate whether it truly has the capability to achieve its stated purpose:**
+
+| Question | Potential Issue If |
+|----------|-------------------|
+| Does it understand the domain's core concepts? | Uses fixed templates without domain understanding |
+| Can it handle complex/varied scenarios? | Only works for simple/fixed cases |
+| Are outputs dynamically generated based on input? | Hardcoded values, fixed structures, preset results |
+| Does it have necessary knowledge to make decisions? | Missing knowledge base or decision logic |
+| Can it adapt to different requirements? | One-size-fits-all approach |
+
+**Universal Anti-Patterns (apply to any content type):**
+
+| Anti-Pattern | Indicator | Impact |
+|--------------|-----------|--------|
+| Fixed template | Same output structure regardless of input | Cannot handle varied scenarios |
+| Hardcoded values | Preset numbers, positions, or results | Incorrect for different inputs |
+| Missing calculation/logic | Results preset instead of computed | Fundamentally wrong outputs |
+| Oversimplified model | Linear/simple logic for complex domain | Cannot represent real complexity |
+| Lack of domain knowledge | No understanding of domain concepts | Outputs lack accuracy |
+
+**Audit approach**:
+1. First understand what the content claims to do (from description/purpose)
+2. Then evaluate whether its implementation can actually achieve that
+3. If gap exists between claimed capability and actual capability → Flag as functional deficiency
 
 ### Check 3: Design Intent Judgment
 
@@ -250,6 +292,21 @@ AI executors have strong contextual understanding and can infer meaning from con
 
 **If ALL checked → Addition may be justified**
 
+### When ADD is Necessary (Exceptions)
+
+Despite the "ADD as last resort" principle, the following are considered **necessary additions**:
+
+| Category | Examples | Why Necessary |
+|----------|----------|---------------|
+| Official standards | API parameters, protocol specs, format definitions from official docs | Cannot be inferred, must be exact |
+| Safety-critical rules | Security constraints, data validation, access control | Risk of harm if omitted |
+| Necessary prohibition rules | "Do NOT" lists for scope control, feature creep prevention | Prevents unintended behavior |
+| Necessary clarifying examples | When rule is ambiguous without example | Reduces misinterpretation |
+
+**Key principle**: "Necessary" means removal would cause ≥30% misunderstanding or functional failure.
+
+**Applies equally to auditing**: When auditing other skills, do NOT flag necessary additions as violations of Occam's Razor.
+
 ---
 
 ## Necessity Threshold
@@ -264,15 +321,18 @@ AI executors have strong contextual understanding and can infer meaning from con
 | Content AI can infer from context | No | Trust AI capability |
 | Edge case <5% occurrence | No | Handle as exception |
 
-### Size Thresholds (Tiered)
+### Size Thresholds
+
+**SKILL.md body** (official requirement):
 
 | Range | Status | Action |
 |-------|--------|--------|
 | ≤500 lines | Ideal | No action |
 | 500-550 (≤10% over) | Acceptable | **NOT an issue** |
 | 550-625 (10-25% over) | Review | Info only |
-| 625-750 (>25% over) | Optimize | Warning |
-| >750 lines | Must fix | Severe |
+| >625 lines | Optimize | Warning |
+
+**Reference files**: No official limit. Evaluate based on content nature (see `rules-universal.md`).
 
 ### Anti-Patterns to Avoid
 

@@ -89,7 +89,7 @@
 
 | Check | Expected | Severity |
 |-------|----------|----------|
-| No god files (>750 lines) | Yes | Warning |
+| No god files (SKILL.md >625 lines) | Yes | Warning |
 | No scattered rules (>3 files) | Yes | Warning |
 | No circular dependencies | Yes | Severe |
 | Separation of concerns | Yes | Warning |
@@ -104,7 +104,7 @@
 |-------|-------|-------------|
 | L1 (metadata) | ≤100 words | Warning (>500: Severe) |
 | L2 (body) | ≤500 lines | Warning (>625: Severe) |
-| L3 (references) | ≤500 lines each | Warning (>625: Severe) |
+| L3 (references) | **No official limit** | Evaluate by content nature |
 | L4 (scripts) | No limit | N/A |
 
 ### Content Placement
@@ -237,6 +237,17 @@
 | Consistent verb forms | Same verbs for actions | Warning |
 | Consistent formatting | Same style for elements | Warning |
 
+### Wording Patterns (LLM Best Practices)
+
+| Check | Expected | Severity |
+|-------|----------|----------|
+| Hedging language | "Based on provided context..." for uncertain claims | Warning |
+| Avoid absolutes | No unqualified "always", "guaranteed", "never" | Warning |
+| Scope constraint wording | "EXACTLY and ONLY", explicit "Do NOT" lists | Warning |
+| Ambiguity handling wording | Clarifying questions OR interpretations with labels | Warning |
+| No fabrication wording | "Never fabricate..." for factual content | Severe |
+| Verbosity constraint wording | "≤N sentences/bullets", not vague "be concise" | Warning |
+
 ---
 
 ## Dimension 0.8: Security & Compliance
@@ -366,12 +377,17 @@
 
 | Check | Expected | Severity |
 |-------|----------|----------|
-| Specific task description | Yes | Severe |
-| Section delimiters | Yes | Warning |
-| Length constraints | Yes | Warning |
-| Explicit scope | Yes | Warning |
-| Reference text for accuracy | Yes | Warning |
-| No fabrication | Yes | Severe |
+| Verbosity constraints | Explicit length limits | Severe |
+| Scope boundaries | "Do not" constraints present | Severe |
+| No fabrication instruction | "Never fabricate..." | Severe |
+| Output schema (structured) | JSON structure defined | Warning |
+| Grounding language | "Based on context" | Warning |
+| Self-check (high-risk) | Verification step | Warning |
+| Tool preference | Tools over internal knowledge | Warning |
+| Agentic updates | Brief, major phases, concrete outcomes | Warning |
+| No task expansion | Don't expand beyond request | Warning |
+| Long-context outline | >10k: outline, restatement, refs | Warning |
+| Structured null handling | Missing → null, re-scan | Warning |
 
 ### Dimension 8: Architecture (Optional)
 

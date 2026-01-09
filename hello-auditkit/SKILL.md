@@ -31,11 +31,14 @@ Comprehensive audit system for AI coding assistant configurations:
 
 ## Core Principles
 
+> **Source**: Based on Latest GPT Prompting Guide (openai-cookbook/examples/gpt-5)
+
 ### Principle 1: 4-Point Verification
 
 Before marking ANY issue, verify:
 1. **Concrete Scenario** - Can describe specific failure?
 2. **Design Scope** - Within intended boundaries?
+2b. **Functional Capability** - Can it actually do what it claims? (Requires domain knowledge first)
 3. **Flaw vs Choice** - Unintentional error or valid choice?
 4. **Threshold Met** - Above quantified threshold?
 
@@ -53,19 +56,40 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 - AI CANNOT: 3+ step inference, domain-specific variations
 - If <30% would misunderstand → exempt from issue
 
-### Principle 4: Size Tolerance
+### Principle 4: Size Tolerance (SKILL.md body only)
 
 | Range | Status |
 |-------|--------|
 | ≤500 lines | Ideal |
 | 500-550 (≤10% over) | **NOT an issue** |
 | 550-625 (10-25% over) | Info only |
-| 625-750 (>25% over) | Warning |
-| >750 lines | Severe |
+| >625 lines | Warning |
+
+> **Note**: Reference files have no official line limit. Evaluate based on content nature.
+
+### Principle 5: Prompt Compliance
+
+**For prompts/instructions, verify critical checks** (see `type-prompt.md` → Prompt Compliance Checks):
+- Verbosity constraints (Severe)
+- Scope boundaries with "do not" list (Severe)
+- No fabrication instruction (Severe)
+- Output schema for structured tasks (Warning)
 
 ## Audit Execution
 
 > **CRITICAL**: Each step below is MANDATORY. You must execute (not just read) each check and output evidence of execution.
+
+### Step 0: Fetch Latest Prompting Guide (For Prompt-Containing Content)
+
+**When auditing content containing AI instructions** (Prompts, Memory files, Skills, Plugins):
+
+1. Fetch latest GPT prompting guides from: `https://github.com/openai/openai-cookbook/tree/main/examples/gpt-5`
+2. Cross-validate with built-in checks in `type-prompt.md`
+3. Apply any new/updated practices found in the latest guide
+
+**Evidence Output**: Note guide version fetched and any new checks applied.
+
+**If WebFetch unavailable**: Use built-in checks, note "offline mode" in report.
 
 ### Step 1: Detection & Classification
 
@@ -89,12 +113,13 @@ Composite    → Apply all + cross-*.md
 | Reference Integrity | Extract ALL references (file refs, anchor links, numbered refs like R1/Step 2) → verify each target exists, no circular refs | "Checked N refs, M broken, K circular" |
 | Structure & Organization | (1) TOC-content match, (2) section categorization correct, (3) template compliance (required sections present, order correct), (4) no orphan sections | "TOC: N entries vs M headings, K mismatches; Template: L issues" |
 | Diagram & Flowchart | If exists: (1) node-text consistency, (2) all paths have endpoints, (3) no infinite loops, (4) decision branches complete | "Checked N diagrams, M consistency issues, K logic issues" |
-| Language Expression | (1) Ambiguity patterns (may/might/could without condition), (2) terminology consistency (same concept = same term), (3) spelling errors in identifiers/headings, (4) redundant content | "Found N ambiguity, M terminology, K spelling, L redundancy issues" |
+| Language Expression | (1) Ambiguity patterns (may/might/could without condition), (2) terminology consistency (same concept = same term), (3) spelling errors in identifiers/headings, (4) redundant content, (5) LLM wording patterns (hedging language, avoid absolutes, scope constraint wording, verbosity constraint wording) | "Found N ambiguity, M terminology, K spelling, L redundancy, P wording issues" |
 | Security & Compliance | Check for hardcoded secrets, paths, credentials; input validation rules | "Checked, N security issues" |
-| Size Thresholds | Count lines per file, apply tiered thresholds (≤500 ideal, >750 severe) | "File X: N lines (status)" |
+| Size Thresholds | SKILL.md body: apply tiered thresholds (≤500 ideal). Reference files: evaluate by content nature | "SKILL.md: N lines (status)" |
 | Rule Logic | If rules exist: (1) no conflicts, (2) no duplicates/semantic equivalents, (3) coverage complete, (4) optimization opportunities (DELETE > MERGE > MODIFY) | "Checked N rules: M conflicts, K duplicates, L gaps" |
 | Process Logic | If process/flow defined: (1) all scenarios covered, (2) main flow clear, (3) no dead loops, (4) no conflicting invocations | "Process: N scenarios, M flow issues" |
 | Output & i18n | If output format defined: (1) format specification complete, (2) language control correct (if i18n configured), (3) no hardcoded language-specific content | "Output: N format issues, M i18n issues" |
+| Prompt Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims, (6) Tool preference over internal knowledge, (7) Agentic updates brief with concrete outcomes, (8) Long-context outline for >10k tokens | "Prompt: N verbosity, M scope, K grounding, L tool, P agentic issues" |
 
 **Numbering Check Execution** (commonly missed):
 1. Find all numbered lists (1. 2. 3. or Step 0, Step 1, etc.)
@@ -112,6 +137,7 @@ Composite    → Apply all + cross-*.md
 | Structure Validation | Verbosity constraints? Scope boundaries? Output format? |
 | Content Quality | Specific instructions? Not vague? |
 | LLM Best Practices | Freedom level match? Grounding? Ambiguity handling? |
+| Prompt Compliance | Verbosity limits? "Do not" list? No fabrication? Schema? Self-check? |
 | Audit Checklist | Execute all Fatal/Severe/Warning checks at end of file |
 
 #### For Memory Files (`type-memory.md`):
@@ -127,7 +153,7 @@ Composite    → Apply all + cross-*.md
 |----------------|--------|
 | Directory Validation | SKILL.md exists? Correct filename? |
 | Frontmatter | name, description, triggers present? |
-| Body Size | Apply tiered thresholds (≤500 ideal, >750 severe) |
+| Body Size | SKILL.md: ≤500 ideal, >625 warning. References: no limit, evaluate by content |
 | Script Integrity | Declared scripts exist? Imports valid? Shebang? Error handling? |
 | References | Has "when to read" guidance? |
 
@@ -153,12 +179,12 @@ Composite    → Apply all + cross-*.md
 | Rule Propagation | Global rules applied in local files? |
 | Conflict Detection | Same-file contradictions? Cross-file contradictions? |
 | Structural Redundancy | Repeated sections? Duplicate tables? Parallel content? → centralize |
-| Red Flags | God files (>750 lines)? Scattered rules (>3 files)? Circular deps? |
+| Red Flags | SKILL.md >625 lines? Scattered rules (>3 files)? Circular deps? |
 
 #### From `cross-progressive-loading.md`:
 | Check | Action |
 |-------|--------|
-| Content Level Audit | L1 ≤100 words? L2 ≤500 lines? L3 ≤500/file? |
+| Content Level Audit | L1 ≤100 words? L2 ≤500 lines? L3: evaluate by content nature |
 | Content Placement | Core workflow in L2? Edge cases in L3? |
 | Reference Guidance | Each reference has "when to read"? |
 | Anti-Patterns | Metadata bloat? Monolithic body? Essential in L3? |
@@ -173,9 +199,10 @@ Composite    → Apply all + cross-*.md
 
 ### Step 5: Issue Verification (4-Point Check)
 
-For each suspected issue, verify ALL 4 points:
+For each suspected issue, verify ALL points:
 1. **Concrete scenario** - Can describe specific failure?
 2. **Design scope** - Within intended boundaries?
+2b. **Functional capability** - Does implementation match claimed capability?
 3. **Flaw vs choice** - Unintentional error or valid design?
 4. **Threshold met** - Above quantified threshold?
 
@@ -247,6 +274,7 @@ Read `references/rules-universal.md` when:
 | False positive prevention | `rules-universal.md` → Verification Questions |
 | Size thresholds | `rules-universal.md` → Universal Size Thresholds |
 | Checklist by dimension | `ref-checklist.md` |
+| LLM prompting best practices | `type-prompt.md` → LLM Prompting Best Practices |
 
 ### Quick Filtering Rules
 
@@ -265,3 +293,6 @@ Read `references/rules-universal.md` when:
 | Gemini CLI | github.com/google-gemini/gemini-cli |
 | Anthropic Docs | docs.anthropic.com |
 | OpenAI Docs | github.com/openai/openai-cookbook |
+| GPT Prompting Resources | github.com/openai/openai-cookbook/tree/main/examples/gpt-5 |
+
+> **Version Policy**: Always use the **latest version** of GPT prompting guides as authoritative source. When multiple versions exist in the gpt-5 directory, prefer the highest version number (e.g., gpt-5.2 over gpt-5.1 over gpt-5). The directory contains prompting guides, troubleshooting guides, and optimization cookbooks.

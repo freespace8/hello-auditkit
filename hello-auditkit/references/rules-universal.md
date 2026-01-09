@@ -1,5 +1,11 @@
 # Universal Audit Rules
 
+> **Dual Application**: These rules serve as both:
+> 1. **Audit standards** for checking other skills
+> 2. **Quality standards** that audited content should follow
+>
+> Key principles audited content should follow: AI Executor Awareness, Conciseness, LLM Wording Patterns, and necessity-based content (see `methodology-core.md`).
+
 ## Table of Contents
 
 - [AI Executor Awareness](#ai-executor-awareness)
@@ -49,20 +55,31 @@ User may:
 
 ## Universal Prompt Quality Rules
 
-> **Execution Required**: For ALL content containing AI instructions (prompts, skills, agents, commands), verify each check below.
+> **Execution Required**: For ALL content containing AI instructions, verify each check below.
+> **Detailed guidance**: See `type-prompt.md` → LLM Prompting Best Practices
+> **Dynamic Verification**: Execute Step 0 in SKILL.md to fetch and cross-validate against latest GPT guides.
 
-**Applies to**: All content containing instructions for AI execution
-- Prompts, Memory files, Skill bodies, Command bodies, Agent bodies, Hook prompts
+**Applies to**: Prompts, Memory files, Skill bodies, Command bodies, Agent bodies, Hook prompts
 
 ### LLM Prompting Best Practices
 
 | Check | Requirement | Severity | Applies To |
 |-------|-------------|----------|------------|
-| Verbosity constraints | Explicit output length limits | Warning | All prompts |
-| Scope boundaries | Clear "do not" constraints | Warning | All instructions |
-| Ambiguity handling | Instructions for unclear cases | Info | Complex tasks |
+| Verbosity constraints | Explicit output length limits (e.g., "≤3 sentences", "≤5 bullets") | Severe | All prompts |
+| Scope boundaries | Clear "do not" constraints, explicit exclusions | Severe | All instructions |
+| No fabrication | "Never fabricate..." instruction for factual content | Severe | Data extraction |
+| Ambiguity handling | Instructions for unclear cases (clarify OR interpret) | Warning | Complex tasks |
 | No AI-known content | Don't explain standard concepts | Warning | All |
-| Grounding | "Based on context" for uncertain claims | Info | Data extraction |
+| Grounding | "Based on context" for uncertain claims | Warning | Data extraction |
+| Self-check | Verification step for high-risk outputs | Warning | Legal/financial/security |
+| Output schema | JSON structure or format specification | Warning | Structured output |
+| Tool preference | Prefer tools over internal knowledge for fresh/user-specific data | Warning | Tool-using content |
+| Tool parallelization | Parallelize independent read operations | Info | Tool-using content |
+| Write confirmation | After writes, restate: what changed, where, validation performed | Warning | Tool-using content |
+| Agentic updates | Brief updates (1-2 sentences) at major phases only, concrete outcomes | Warning | Agent/agentic content |
+| No task expansion | Don't expand beyond user request; flag optional work | Warning | Agent/agentic content |
+| Long-context outline | For >10k tokens: internal outline, constraint restatement, section refs with quotes | Warning | Long content |
+| Structured null handling | Missing fields → null, not guessed; re-scan before return | Warning | Structured output |
 
 ### Freedom Level Matching
 
@@ -211,6 +228,38 @@ User may:
 | Consistent verb forms | Same verbs for same actions | Warning |
 | Consistent formatting | Same style for same elements | Warning |
 
+### Wording Patterns (LLM Best Practices)
+
+> **Source**: Latest GPT Prompting Guide from [openai-cookbook/examples/gpt-5](https://github.com/openai/openai-cookbook/tree/main/examples/gpt-5)
+>
+> **Version Policy**: Always use the **latest version** as authoritative source. When multiple versions exist, prefer the highest version number (e.g., gpt-5.2 over gpt-5.1 over gpt-5).
+
+#### Recommended Wording Patterns
+
+| Pattern | Recommended Wording | Purpose | Severity if Missing |
+|---------|---------------------|---------|---------------------|
+| Verbosity constraint | "≤N sentences", "≤N bullets", "≤N words" | Explicit length control | Warning |
+| Scope constraint | "EXACTLY and ONLY what requested" | Prevent feature creep | Warning |
+| Prohibition list | "Do NOT: [specific items]" | Clear boundaries | Warning |
+| Context grounding | "Based on provided context", "Use ONLY the text inside [Context]" | Prevent hallucination | Warning |
+| No fabrication | "Never fabricate exact figures, line numbers, or external references" | Factual accuracy | Severe |
+| Evidence check | "Before answering, verify that [X] is explicitly present in [Context]" | Grounding verification | Warning |
+| Ambiguity handling | "If unclear: provide 1-3 clarifying questions OR 2-3 interpretations with assumption labels" | Handle uncertainty | Warning |
+| Completion definition | Explicit stop condition or "done when" criteria | Prevent overthinking | Warning |
+| Hedging language | "Based on provided context...", "typically", "generally" | Avoid absolute claims | Warning |
+
+#### Wording Anti-Patterns (Official Warnings)
+
+| Anti-Pattern | Examples | Why Problematic | Severity |
+|--------------|----------|-----------------|----------|
+| Filler phrases | "Take a deep breath", "You are a world-class expert" | Modern LLMs treat as noise | Warning |
+| Vague verbosity | "Be concise", "Keep it short" | No measurable constraint | Warning |
+| Absolute claims | "Always", "Never", "Guaranteed" (without qualification) | Lacks grounding | Warning |
+| Maximize language | "Analyze everything", "Be thorough" | Causes overthinking/over-tool-calling | Warning |
+| Contradictory instructions | Conflicting rules in same prompt | Modern reasoning models waste tokens reconciling (more damaging than other models) | Severe |
+
+**Audit approach**: Check if instructions use LLM-recommended wording patterns. Flag when vague, absolute, or anti-pattern language is used where qualified language is appropriate.
+
 ---
 
 ## Security & Compliance Rules
@@ -274,25 +323,37 @@ User may:
 
 ## Universal Size Thresholds
 
-> See `methodology-core.md` → Necessity Threshold for rationale.
+> Based on official Agent Skills specification (agentskills.io/specification)
 
-### Tiered Size Evaluation
+### SKILL.md Body (Official Requirement)
 
 | Range | Status | Severity |
 |-------|--------|----------|
 | ≤500 lines | Ideal | - |
 | 500-550 (≤10% over) | **NOT an issue** | - |
 | 550-625 (10-25% over) | Info only | Info |
-| 625-750 (>25% over) | Should fix | Warning |
-| >750 lines | Must fix | Severe |
+| >625 lines | Should optimize | Warning |
 
-### Component-Specific Limits
+> **Source**: "Keep your main `SKILL.md` under 500 lines. Move detailed reference material to separate files."
+
+### Reference Files (No Official Limit)
+
+**Official guidance**: "Keep individual reference files focused. Agents load these on demand, so smaller files mean less use of context."
+
+**Audit approach**: No hardcoded line limit. Evaluate based on content nature:
+- Does content have indivisible integrity? (e.g., professional knowledge that cannot be split without functional risk)
+- Would splitting cause loading omissions?
+- Is there obvious redundancy that can be trimmed?
+
+**Only flag if**: Content has clear redundancy or can be split without functional impact.
+
+### Component Summary
 
 | Component | Limit | Notes |
 |-----------|-------|-------|
 | L1 Metadata | ~100 words | Permanent context cost |
-| L2 Body | <500 lines | Self-sufficient for common cases |
-| L3 References | ≤500 lines/file | On-demand loading |
+| L2 Body (SKILL.md) | <500 lines | Official requirement |
+| L3 References | **No limit** | Evaluate by content nature |
 | L4 Scripts | No limit | Runtime only |
 
 ---
@@ -350,6 +411,11 @@ User may:
 - Code examples showing syntax (not content)
 - Variable/function names
 - Log messages for debugging
+- **Official documentation/specification/standard content** (API parameters, protocol values, format definitions)
+- **Necessary prohibition rules** ("Do NOT" lists for scope control, security constraints)
+- **Necessary clarifying examples** (when rule is ambiguous without example)
+
+> **Key principle**: See `methodology-core.md` → "When ADD is Necessary" for full criteria.
 
 ---
 
@@ -357,7 +423,7 @@ User may:
 
 ### Fatal Issues (Blocks Execution)
 
-- Contradictory rules (A vs NOT A)
+- Contradictory rules (A vs NOT A) — **Warning**: Particularly damaging for modern reasoning models (wastes reasoning tokens attempting to reconcile)
 - Impossible conditions
 - Circular references (A→B→C→A)
 - Missing required fields
@@ -375,7 +441,7 @@ User may:
 
 ### Warnings (Suboptimal)
 
-- Size >625 lines (25%+ over recommended)
+- SKILL.md body >625 lines (applies to SKILL.md only, not references)
 - Missing "when to read" for references
 - Vague instructions ("do it well")
 - Inconsistent terminology without explanation
@@ -384,7 +450,7 @@ User may:
 
 ### Info (Suggestions)
 
-- Size 550-625 lines (10-25% over)
+- SKILL.md body 550-625 lines (10-25% over)
 - Could benefit from examples
 - Minor style variations
 - Optional fields missing
