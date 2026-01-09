@@ -1,8 +1,16 @@
 # Audit Methodology Core
 
-> **Dual Application**: The principles in this document serve TWO purposes:
+> **Triple Application**: The principles in this document serve THREE purposes:
 > 1. **As audit standards**: When auditing other skills, check if they follow these principles
 > 2. **As self-compliance**: This audit system itself follows these principles
+> 3. **As fix validation**: ALL fix proposals MUST pass these principles before being output
+>
+> **CRITICAL - Fix Proposal Validation**:
+> Before outputting ANY fix proposal, verify:
+> - Is ADD truly necessary? (Could DELETE/MERGE/MODIFY achieve the goal?)
+> - Can AI infer from existing examples/context? (If yes, do NOT add explicit rules)
+> - Is this adding hardcoded content where AI should judge based on context? (If yes, do NOT add)
+> - Does the original design already convey intent through examples/structure? (If yes, do NOT add redundant rules)
 >
 > When auditing, verify that the audited content adheres to: Occam's Razor, AI Capability awareness, Fix Priority (DELETE > ADD), and necessity-based additions.
 
@@ -344,6 +352,23 @@ Despite the "ADD as last resort" principle, the following are considered **neces
 | "Add Documentation" | May be unnecessary | Question if behavior needed |
 | "Add Cross-Reference" | Creates coupling | MERGE related content |
 
+### Fix Proposal Anti-Patterns
+
+**CRITICAL**: These patterns indicate the fix proposal itself violates core principles:
+
+| Anti-Pattern | Example | Why Wrong | Correct Approach |
+|--------------|---------|-----------|------------------|
+| Adding hardcoded numbers | "Add: ≤5 bullets, ≤200 words" | AI can judge from examples | Check if examples already convey length expectation |
+| Adding prohibition rules | "Add: Do NOT fabricate" | AI understands from context (e.g., "based on materials") | Verify if context already implies this |
+| Adding explicit rules for implied behavior | "Add: Data must come from user materials" | Original design shows `{{from materials}}` placeholders | Recognize that design pattern already conveys intent |
+| Over-specifying format | "Add: Use table format for X" | Examples already show table format | AI can infer from existing examples |
+| Defensive additions | "Add rule to prevent edge case" | Edge case <5% occurrence | Trust AI to handle reasonably |
+
+**Self-Check Before Outputting Fix**:
+1. "If I remove this fix, would AI still produce correct output?" → If YES, fix is unnecessary
+2. "Is this fix adding hardcoded content?" → If YES, reconsider
+3. "Does the original design already convey this through examples/patterns?" → If YES, don't add
+
 ---
 
 ## Summary
@@ -352,7 +377,9 @@ Despite the "ADD as last resort" principle, the following are considered **neces
 |-----------|-----------|
 | **4-Point Check** | All issues must pass 4 verification steps |
 | **Occam's Razor** | "If necessary" is the key, not "fewer is better" |
-| **AI Trust** | AI can infer most things from context |
+| **AI Trust** | AI can infer most things from context and examples |
 | **Fix Hierarchy** | DELETE > MERGE > RESTRUCTURE > MODIFY > ADD |
 | **Addition Test** | All 5 criteria must pass before adding |
 | **Size Tolerance** | ≤10% over is NOT an issue |
+| **Fix Validation** | ALL fix proposals must pass principle check before output |
+| **No Hardcoding** | Do NOT add hardcoded values where AI should judge from context |

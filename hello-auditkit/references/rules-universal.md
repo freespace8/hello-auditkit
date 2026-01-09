@@ -61,25 +61,37 @@ User may:
 
 **Applies to**: Prompts, Memory files, Skill bodies, Command bodies, Agent bodies, Hook prompts
 
+### Pre-Check: Intent Already Conveyed?
+
+**CRITICAL**: Before flagging any "missing" element, first verify if the intent is already conveyed:
+
+| Check | Question | If YES → | If NO → |
+|-------|----------|----------|---------|
+| Demonstrative examples | Does the content have examples that imply the expected behavior/format? | NOT an issue (AI can infer) | Continue to rule check |
+| Contextual clarity | Can AI infer the expected behavior from surrounding context? | NOT an issue (AI capability) | Continue to rule check |
+| Threshold test | Would <30% misunderstand without explicit constraint? | NOT an issue (below threshold) | Continue to rule check |
+
+**Only flag as issue if ALL pre-checks answer NO.**
+
 ### LLM Prompting Best Practices
 
-| Check | Requirement | Severity | Applies To |
-|-------|-------------|----------|------------|
-| Verbosity constraints | Explicit output length limits (e.g., "≤3 sentences", "≤5 bullets") | Severe | All prompts |
-| Scope boundaries | Clear "do not" constraints, explicit exclusions | Severe | All instructions |
-| No fabrication | "Never fabricate..." instruction for factual content | Severe | Data extraction |
-| Ambiguity handling | Instructions for unclear cases (clarify OR interpret) | Warning | Complex tasks |
-| No AI-known content | Don't explain standard concepts | Warning | All |
-| Grounding | "Based on context" for uncertain claims | Warning | Data extraction |
-| Self-check | Verification step for high-risk outputs | Warning | Legal/financial/security |
-| Output schema | JSON structure or format specification | Warning | Structured output |
-| Tool preference | Prefer tools over internal knowledge for fresh/user-specific data | Warning | Tool-using content |
-| Tool parallelization | Parallelize independent read operations | Info | Tool-using content |
-| Write confirmation | After writes, restate: what changed, where, validation performed | Warning | Tool-using content |
-| Agentic updates | Brief updates (1-2 sentences) at major phases only, concrete outcomes | Warning | Agent/agentic content |
-| No task expansion | Don't expand beyond user request; flag optional work | Warning | Agent/agentic content |
-| Long-context outline | For >10k tokens: internal outline, constraint restatement, section refs with quotes | Warning | Long content |
-| Structured null handling | Missing fields → null, not guessed; re-scan before return | Warning | Structured output |
+| Check | Requirement | Severity | Applies To | Pre-Check |
+|-------|-------------|----------|------------|-----------|
+| Verbosity constraints | Output length guidance (explicit limits OR demonstrative examples) | Severe only if AI cannot infer | All prompts | Check if examples imply length |
+| Scope boundaries | Boundaries conveyed (explicit "do not" OR clear context) | Severe only if AI cannot infer | All instructions | Check if context implies scope |
+| No fabrication | "Never fabricate..." instruction for factual content | Severe | Data extraction | Always required for factual tasks |
+| Ambiguity handling | Instructions for unclear cases (clarify OR interpret) | Warning | Complex tasks | - |
+| No AI-known content | Don't explain standard concepts | Warning | All | - |
+| Grounding | "Based on context" for uncertain claims | Warning | Data extraction | - |
+| Self-check | Verification step for high-risk outputs | Warning | Legal/financial/security | - |
+| Output schema | JSON structure or format specification | Warning | Structured output | Check if examples show format |
+| Tool preference | Prefer tools over internal knowledge for fresh/user-specific data | Warning | Tool-using content | - |
+| Tool parallelization | Parallelize independent read operations | Info | Tool-using content | - |
+| Write confirmation | After writes, restate: what changed, where, validation performed | Warning | Tool-using content | - |
+| Agentic updates | Brief updates (1-2 sentences) at major phases only, concrete outcomes | Warning | Agent/agentic content | - |
+| No task expansion | Don't expand beyond user request; flag optional work | Warning | Agent/agentic content | - |
+| Long-context outline | For >10k tokens: internal outline, constraint restatement, section refs with quotes | Warning | Long content | - |
+| Structured null handling | Missing fields → null, not guessed; re-scan before return | Warning | Structured output | - |
 
 ### Freedom Level Matching
 
@@ -459,6 +471,17 @@ User may:
 ---
 
 ## Universal Should NOT Flag
+
+### AI Inference Capability
+
+**CRITICAL**: Do NOT flag as issues when AI can infer correct behavior:
+
+| Pattern | Reason | Example |
+|---------|--------|---------|
+| No explicit constraints BUT demonstrative examples exist | AI can infer from examples | Examples show 3-5 bullet format → AI understands length expectation |
+| No explicit rules BUT context clearly implies behavior | AI capability | "Engineering bid" context → AI understands data should come from provided materials |
+| Original design conveys intent through structure/examples | Redundant to add explicit rules | Structured example output → implies format requirements |
+| Placeholder patterns indicate expected behavior | AI understands placeholder semantics | `{{content from materials}}` → AI knows to extract, not fabricate |
 
 ### Size Tolerance
 

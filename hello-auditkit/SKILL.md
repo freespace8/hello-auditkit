@@ -207,6 +207,25 @@ For each suspected issue, verify ALL points:
 
 If ANY fails → Discard the issue (move to Filtered)
 
+### Step 5b: Fix Proposal Verification (Principle Check)
+
+**CRITICAL**: Before outputting ANY fix proposal, verify it against core principles:
+
+| Check | Question | If NO → |
+|-------|----------|---------|
+| Occam's Razor | Is this addition truly necessary? Could the goal be achieved by DELETE/MERGE/MODIFY instead of ADD? | Reconsider fix approach |
+| AI Inference | Can AI infer the correct behavior from existing examples/context/patterns? | Do NOT add explicit rule |
+| Hardcoding Check | Is this adding hardcoded values (e.g., "≤5 bullets", "≤200 words") where AI should judge based on context? | Remove hardcoded values |
+| Prohibition Check | Is this adding "do not" rules where AI already understands from intent/context? | Remove unnecessary prohibition |
+| Example Redundancy | Does the original design already convey intent through examples/structure? | Do NOT add redundant rules |
+
+**Verification Process**:
+1. For each proposed fix, ask: "If I remove this fix, would AI still produce correct output based on existing content?"
+2. If YES → The fix is unnecessary, discard it
+3. If NO → Verify the fix uses minimal intervention (prefer MODIFY over ADD)
+
+**If ANY check fails → Revise or discard the fix proposal**
+
 ### Step 6: Generate Report
 
 Follow `references/ref-output-format.md` for structure.
@@ -223,21 +242,21 @@ Follow `references/ref-output-format.md` for structure.
 
 ## Reference Files
 
-### Layer 0: Core Methodology (永恒不变)
+### Layer 0: Core Methodology (Immutable Principles)
 
 Read `references/methodology-core.md` when:
 - Need to verify if something is truly an issue
 - Deciding fix priority
 - Understanding AI capability boundaries
 
-### Layer 1: Universal Rules (通用规则)
+### Layer 1: Universal Rules (Common Rules)
 
 Read `references/rules-universal.md` when:
 - Starting any audit
 - Need Should Flag / Should NOT Flag patterns
 - Checking size thresholds
 
-### Layer 2: Type-Specific Rules (类型规则)
+### Layer 2: Type-Specific Rules (Type Rules)
 
 | File | Read When |
 |------|-----------|
@@ -246,7 +265,7 @@ Read `references/rules-universal.md` when:
 | `references/type-skill.md` | Auditing skills (SKILL.md, scripts) |
 | `references/type-plugin.md` | Auditing plugins, hooks, MCP, LSP |
 
-### Layer 3: Cross-Cutting Rules (跨切规则)
+### Layer 3: Cross-Cutting Rules (Cross-Cutting Rules)
 
 | File | Read When |
 |------|-----------|
@@ -254,7 +273,7 @@ Read `references/rules-universal.md` when:
 | `references/cross-design-coherence.md` | Checking design consistency |
 | `references/cross-progressive-loading.md` | Evaluating content placement |
 
-### Layer 4: Reference Materials (参考资料)
+### Layer 4: Reference Materials (Reference Materials)
 
 | File | Read When |
 |------|-----------|

@@ -33,10 +33,12 @@
 
 ## Structure Validation
 
+> **Pre-Check Required**: Before flagging any "missing" element, first verify if the intent is already conveyed through examples, context, or patterns that AI can infer from. Only flag if AI cannot reasonably infer the expected behavior.
+
 | Check | Requirement | Severity |
 |-------|-------------|----------|
-| Verbosity constraints | Explicit length limits (e.g., "≤3 sentences", "≤5 bullets") | Severe |
-| Scope boundaries | Clear "do not" constraints, explicit exclusions | Severe |
+| Verbosity constraints | Output length guidance present (explicit limits OR demonstrative examples OR context AI can infer from) | Severe only if AI cannot infer |
+| Scope boundaries | Boundaries conveyed (explicit "do not" list OR clear context/examples showing scope) | Severe only if AI cannot infer |
 | Ambiguity handling | Instructions for unclear cases | Warning |
 | Output format | Specified structure/format with schema | Warning |
 | Grounding | "Based on context" hedging for uncertain claims | Warning |
@@ -79,13 +81,15 @@ Before outputting legal/financial/security content:
 
 ### Bad Prompt Patterns
 
-| Pattern | Problem | Fix |
-|---------|---------|-----|
-| "Do it well" | Vague, non-actionable | Specify criteria |
-| No length constraints | Unbounded verbosity | Add "≤N sentences" |
-| No scope boundaries | Feature creep | Add "do NOT" list |
-| Absolute claims | No grounding | Add "based on context" |
-| "Be helpful" | Too generic | Specify behaviors |
+> **Fix Approach**: Before suggesting "Add X", first check if existing examples/context already convey the intent. Prefer MODIFY over ADD.
+
+| Pattern | Problem | Fix Approach |
+|---------|---------|--------------|
+| "Do it well" | Vague, non-actionable | Clarify criteria (modify existing text) |
+| No length guidance AND no examples | Unbounded verbosity | First check if examples imply length; if not, add minimal guidance |
+| No scope indication AND no context | Feature creep risk | First check if context implies scope; if not, clarify boundaries |
+| Absolute claims | No grounding | Add hedging language |
+| "Be helpful" | Too generic | Specify concrete behaviors |
 | "Handle errors" | Undefined | Specify error types |
 
 ---
@@ -286,23 +290,25 @@ Before outputting, re-scan answer for:
 
 ### Should Flag
 
-| Issue | Severity | Principle |
-|-------|----------|-----------|
-| Contradictory instructions | Fatal | - |
-| Impossible constraints | Fatal | - |
-| Missing critical context | Fatal | - |
-| No verbosity constraints for open-ended tasks | Severe | Verbosity Control |
-| No scope boundaries | Severe | Scope Discipline |
-| No "do not" constraints | Severe | Scope Discipline |
-| Ambiguous output format for structured tasks | Severe | Structured Extraction |
-| No error handling instructions | Severe | - |
-| Fabrication allowed (no grounding) | Severe | Hallucination Prevention |
-| Vague instructions ("do it well") | Warning | Explicit over Implicit |
-| Missing examples for complex tasks | Warning | - |
-| No hedging guidance for uncertain cases | Warning | Grounding |
-| Overly long without structure | Warning | Long-Context Handling |
-| No self-check for high-risk content | Warning | High-Risk Self-Check |
-| Absolute claims without hedging | Warning | Grounding |
+> **Pre-Check**: Before flagging, verify that the issue cannot be resolved by AI inference from existing examples/context.
+
+| Issue | Severity | Principle | Pre-Check |
+|-------|----------|-----------|-----------|
+| Contradictory instructions | Fatal | - | Always flag |
+| Impossible constraints | Fatal | - | Always flag |
+| Missing critical context | Fatal | - | Always flag |
+| No verbosity guidance AND no demonstrative examples | Severe | Verbosity Control | Only if AI cannot infer from examples |
+| No scope indication AND no contextual boundaries | Severe | Scope Discipline | Only if AI cannot infer from context |
+| No "do not" constraints AND ambiguous scope | Severe | Scope Discipline | Only if AI cannot infer boundaries |
+| Ambiguous output format for structured tasks | Severe | Structured Extraction | Check if examples show format |
+| No error handling instructions | Severe | - | Check if obvious from context |
+| Fabrication allowed (no grounding) | Severe | Hallucination Prevention | Always flag for factual tasks |
+| Vague instructions ("do it well") | Warning | Explicit over Implicit | Check if examples clarify |
+| Missing examples for complex tasks | Warning | - | Only if truly complex |
+| No hedging guidance for uncertain cases | Warning | Grounding | Check context |
+| Overly long without structure | Warning | Long-Context Handling | - |
+| No self-check for high-risk content | Warning | High-Risk Self-Check | - |
+| Absolute claims without hedging | Warning | Grounding | - |
 
 ### Should NOT Flag
 
@@ -313,6 +319,9 @@ Before outputting, re-scan answer for:
 | Reasonable interpretation choices | Valid |
 | Missing optional elements | Optional |
 | No self-check for low-risk content | Not required |
+| **No explicit constraints BUT demonstrative examples exist** | AI can infer from examples |
+| **No explicit rules BUT context clearly implies behavior** | AI capability - can infer from context |
+| **Original design conveys intent through structure/examples** | Redundant to add explicit rules |
 
 ---
 

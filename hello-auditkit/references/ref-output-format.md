@@ -414,14 +414,5 @@ List ALL issues with their recommended proposal:
 
 ## Output Rules
 
-### File Creation
-
-- **Output**: Always create report file (not terminal output)
-- **Filename**: `审计报告-{target-name}-{YYYYMMDD}.md`
-- **Location**: Parent directory of audited target (e.g., audit `.../skills/hello-xxx` → output to `.../skills/`)
-
-### No Issues Case
-When no issues found:
-- Section 3: Statistics all 0, show "✅ No issues found" and "✅ No filtered issues"
-- Section 4: Show "✅ No fixes or optimizations needed"
-- Section 5: Quality Judgment is "✅ Pass", Verdict states "no issues", Recommended Actions shows "无需操作 - 该技能符合所有审计标准。" (report ends here)
+- **Output method**: Print report directly in terminal
+- **When no issues found**: Output all sections following the structure, statistics show 0, verdict is Pass
