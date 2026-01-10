@@ -57,9 +57,9 @@ Audit ALL files in skill directory by type. Report: "Total files: N, Audited: N"
 
 | Field | Rule | Severity |
 |-------|------|----------|
-| name | Required, ≤64 characters (character count, not bytes) | Severe |
+| name | Required, ≤64 characters | Severe |
 | name | Lowercase letters, numbers, hyphens only | Warning |
-| description | Required, ≤1024 characters (character count, not bytes; ≤500 recommended) | Severe |
+| description | Required, ≤1024 characters (≤500 recommended) | Severe |
 | description | Must include trigger conditions | Severe |
 | allowed-tools | Valid tool names, comma-separated | Warning |
 
@@ -275,21 +275,17 @@ See references/ for more information.
 
 > **Full details**: See `methodology-core.md` → AI Capability Model
 > **Full LLM checks**: See `rules-universal.md` → LLM Prompting Best Practices
-> **Multi-phase checks**: See `type-prompt.md` → Conversational/Multi-Phase Prompt Rules
 
 | Check | Rule | Severity |
 |-------|------|----------|
 | Avoid over-specification | Don't specify what AI can infer | Warning |
-| Use semantic labels | Semantic placeholders vs hardcoded strings | Warning |
+| Use semantic labels | `{error_message}` vs `"Error occurred"` | Warning |
 | Trust AI judgment | Guidelines over rigid rules | Info |
 | Verbosity constraints | Explicit output length limits | Warning |
-| Scope boundaries | Clear prohibition constraints | Warning |
+| Scope boundaries | Clear "do not" constraints | Warning |
 | Tool preference | Prefer tools over internal knowledge | Warning |
 | Agentic updates | Brief updates at major phases (if agentic) | Warning |
 | Long-context outline | For >10k tokens: outline, restatement | Warning |
-| Constraint centralization | If multi-phase: critical rules in ≤3 locations | Severe |
-| Stop condition strength | If multi-phase: strong stop language at phase gates | Severe |
-| Prohibition language | Strong language for critical constraints | Warning |
 
 ### When Hardcoding is Acceptable
 

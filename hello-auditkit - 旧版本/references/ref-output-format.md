@@ -109,30 +109,6 @@ Table with columns: Category | Scanned | Verified | Filtered
 
 **Content varies by audit type. Include applicable subsections:**
 
-> **MANDATORY FIRST**: GPT Guide Compliance check results MUST appear at the beginning of this section.
-
-#### GPT Guide Compliance (MANDATORY FOR ALL TYPES)
-
-> **Source**: GPT Prompting Guide (openai-cookbook/examples/gpt-5)
-
-Check these items and report status with evidence:
-
-| Check | What to Look For | Severity |
-|-------|------------------|----------|
-| Verbosity | Explicit length constraints | Severe if missing |
-| Scope | Explicit boundaries or "Do NOT" list | Severe if missing |
-| Stop conditions | Strong stop language at phase gates (multi-phase only) | Severe if weak/missing |
-| Centralization | Critical rules concentrated (not scattered >3 locations) | Severe if scattered |
-| Prohibition strength | Strong language for critical constraints | Warning if weak |
-| No fabrication | Grounding instruction for factual tasks | Severe if missing |
-
-Output format: Table showing each check with status (✅/⚠️/❌) and evidence (line number or description).
-
-**Rules**:
-- Mandatory for all audit types
-- Failed checks become issues in Section 3
-- Apply only relevant checks based on content type
-
 | Audit Type | Applicable Subsections |
 |------------|------------------------|
 | Prompt | Content Assessment, LLM Best Practices, Language Expression, Size Check |
@@ -290,42 +266,51 @@ Table with columns: Dimension | 🔴 | 🟡 | 🟢 | Total
 
 #### 3.1 Confirmed Issues
 
-Group by severity level (🔴 → 🟡 → 🟢), each severity group as a separate markdown table.
+Group by severity level (🔴 → 🟡 → 🟢)
 
-**Table format**:
+Table with columns: # | File | Line | Issue Summary | Dimension | Fix Type
 
-| # | File | Line | Issue Summary | Dimension | Fix Type |
-|---|------|------|---------------|-----------|----------|
-
-**Issue numbering**: Sequential across all severity groups (1, 2, 3...)
-
-**Fix Types** (priority order): DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
+**Fix Types** (priority order):
+```
+DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
+```
 
 #### 3.2 Filtered Issues
 
-**Table format**:
+> Issues excluded after 4-point verification. Listed for transparency.
 
-| # | File | Line | Issue Description | Filter Reason |
-|---|------|------|-------------------|---------------|
+Table with columns: # | File | Line | Issue Description | Filter Reason
 
-**Filter Reason Codes**: FR-SC (No scenario), FR-DS (Design choice), FR-AI (AI capable), FR-TH (Below threshold), FR-TOL (Within tolerance)
+**Filter Reason Categories**:
+| Code | Reason | Description |
+|------|--------|-------------|
+| FR-SC | No Scenario | Cannot describe concrete failure |
+| FR-DS | Design Choice | Valid design decision |
+| FR-AI | AI Capable | AI can infer from context |
+| FR-TH | Below Threshold | Below severity threshold |
+| FR-OPT | Optional | Optional element not required |
+| FR-TOL | Within Tolerance | Within acceptable range (e.g., ≤10% over) |
 
-**Numbering**: F1, F2, F3...
+**Numbering**: Confirmed use 1,2,3... Filtered use F1,F2,F3...
+
+**Rules**:
+- Issue Statistics at the TOP of this section
+- Each row ≤20 words
+- This is the ONLY place filtered issues appear
+- Details go to Section 4
 
 ---
 
 ### 4. Fix & Optimization Proposals
 
-> **CRITICAL**: Section 4 MUST contain proposals for ALL confirmed issues from Section 3.1. If Section 3.1 has 4 issues, Section 4 MUST have 4 corresponding proposals.
-
 #### 4.1 Fix Proposals (🔴 Must Fix, 🟡 Should Fix)
 
 **Grouping**: By file (use 📄 marker)
 
-**Per issue format** (use same issue number as Section 3.1):
+**Per issue format**:
 
 ```
-#### 问题 1: [Title] — [Severity Icon] [Severity Level]
+#### Issue #N: [Title] — [Severity Icon] [Severity Level]
 
 **Location**: [File:Lines]
 
@@ -358,8 +343,6 @@ Same format as 4.1, with additional field:
 **Rules**:
 - 4.1 contains only 🔴 and 🟡 issues
 - 4.2 contains only 🟢 issues
-- **MUST have proposal for EVERY confirmed issue** (1:1 mapping with Section 3.1)
-- Issue numbers MUST match Section 3.1 (问题 1, 问题 2, 问题 3...)
 - Multiple proposals per issue allowed, mark recommended with "— Recommended"
 - Each issue has: Location, Problem, Impact, Current, Proposal(s)
 - Code blocks ready for copy-paste
@@ -368,8 +351,6 @@ Same format as 4.1, with additional field:
 ---
 
 ### 5. Conclusion
-
-> **CRITICAL**: This is the FINAL section. NO content after "Recommended Actions" table.
 
 **Required subsections (in order)**:
 
@@ -390,26 +371,21 @@ Table with columns: Judgment | Criteria | Result
 One sentence summarizing: confirmed count, filtered count, overall quality, main issue areas
 - For composite systems: briefly note the core design philosophy observed
 
-#### Recommended Actions (FINAL OUTPUT)
+#### Recommended Actions (Report Ends Here)
+List ALL issues with their recommended proposal:
 
-**Required elements**:
-
-1. **Fix Issues Summary Table** (if 🔴🟡 issues exist):
-
-| # | Issue Summary | Section Reference |
-|---|---------------|-------------------|
-
-2. **Optimization Issues Summary Table** (if 🟢 issues exist):
-
-| # | Issue Summary | Section Reference |
-|---|---------------|-------------------|
-
-3. **Numbered Action Options**: List actions with numbers (1, 2, 3...), prompt user to input number to select
+| # | File:Line | Issue | Recommended Action |
+|---|-----------|-------|-------------------|
+| 1 | `SKILL.md:45` | Missing error handling | Add error handling section |
+| 2 | `rules.md:123` | Rule conflict | Modify to resolve conflict |
+| ... | ... | ... | ... |
 
 **Rules**:
-- User inputs: single "1", multiple "1,2", range "1-3", or "all"
-- Use output language configured at top of SKILL.md
-- This is the FINAL OUTPUT - wait for user input
+- This is the ONLY conclusion location
+- Verification Statistics comes FIRST
+- Quality Judgment comes SECOND
+- Overall Verdict is ONE sentence
+- Recommended Actions table is the final output of the entire report
 
 ---
 

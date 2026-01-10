@@ -1,7 +1,7 @@
 ---
 name: hello-auditkit
-description: Use this skill to audit, review, validate, or check the quality of AI assistant configurations including prompt text, prompt files, skills (SKILL.md), plugins, MCP servers, agents, hooks, memory files (AGENTS.md, CLAUDE.md, GEMINI.md), and composite configurations. Evaluates against GPT Prompting Guide best practices.
-version: 1.0.2
+description: This skill should be used when the user wants to audit, review, validate, analyze, or check the quality of AI coding assistant configurations. Use this skill for examining prompts, memory files (AGENTS.md, CLAUDE.md, GEMINI.md), skills, plugins, hooks, commands, agents, templates, or rules. This includes any request related to quality assessment, best practices compliance, design review, structure validation, issue detection, or comprehensive evaluation of AI assistant components and configurations.
+version: 2.0.0
 ---
 
 <!-- ============ OUTPUT LANGUAGE CONFIGURATION ============ -->
@@ -32,23 +32,6 @@ Comprehensive audit system for AI coding assistant configurations:
 ## Core Principles
 
 > **Source**: Based on Latest GPT Prompting Guide (openai-cookbook/examples/gpt-5)
-
-### Principle 0: GPT Prompting Guide Compliance (MANDATORY)
-
-> **CRITICAL**: This is the PRIMARY audit standard. Every audit MUST check these items and report findings.
-
-**For ALL content containing AI instructions, verify:**
-
-| Check | What to Look For | Severity |
-|-------|------------------|----------|
-| Verbosity constraints | Explicit length limits present | Severe |
-| Scope discipline | Explicit boundaries or prohibition list present | Severe |
-| Stop conditions | Strong stop language at phase gates (multi-phase only) | Severe |
-| Constraint centralization | Critical rules concentrated, not scattered >3 locations | Severe |
-| Prohibition language | Strong language for critical constraints | Warning |
-| No fabrication | Grounding instruction for factual tasks | Severe |
-
-**Audit output**: Report GPT Guide Compliance status with evidence for each check.
 
 ### Principle 1: 4-Point Verification
 
@@ -92,40 +75,20 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 - No fabrication instruction (Severe)
 - Output schema for structured tasks (Warning)
 
-### Principle 6: Grounding & No Fabrication
-
-- Base all findings on actual content examined
-- Never fabricate line numbers, file names, or issue details
-- Use hedging language for uncertain assessments: "appears to", "may indicate"
-
 ## Audit Execution
 
 > **CRITICAL**: Each step below is MANDATORY. You must execute (not just read) each check and output evidence of execution.
->
-> **Agentic Updates**: Send brief updates (1-2 sentences) only at major phase transitions. Avoid narrating routine tool calls.
->
-> **Tool Parallelization**: When scanning multiple files or checking multiple dimensions, parallelize independent read operations for efficiency.
 
-### Step 0: Fetch Latest Prompting Guide (MANDATORY STANDARD)
-
-> **CRITICAL**: The GPT Prompting Guide is a **primary audit standard**, not just a reference. All prompts/instructions MUST be evaluated against these rules.
+### Step 0: Fetch Latest Prompting Guide
 
 1. Access this directory page to get file list: `https://github.com/openai/openai-cookbook/tree/main/examples/gpt-5`
 2. Select the latest version prompting guide (e.g., `gpt-5-2_prompting_guide.ipynb` > `gpt-5-1_prompting_guide.ipynb` > `gpt-5_prompting_guide.ipynb`)
-3. Extract and apply these **mandatory checks** from the guide:
-   - **Verbosity constraints**: "≤N sentences/bullets/words" present?
-   - **Scope discipline**: "EXACTLY and ONLY what requested" + "Do NOT" list present?
-   - **Stop conditions**: Explicit completion criteria for multi-phase content?
-   - **No fabrication**: "Never fabricate..." instruction for factual tasks?
-   - **Long-context handling**: Outline + constraint restatement for >10k tokens?
-   - **Tool preference**: Tools over internal knowledge for fresh data?
-   - **Agentic updates**: Brief (1-2 sentences) at major phases only?
-4. Cross-validate with built-in checks in `type-prompt.md`
-5. **Flag as Severe** if audited content violates any mandatory check above
+3. Cross-validate with built-in checks in `type-prompt.md`
+4. Apply any new/updated practices found
 
-**Evidence Output**: Note guide version fetched, list mandatory checks applied, note any violations found.
+**Evidence Output**: Note guide version fetched and any new checks applied.
 
-**If WebFetch fails**: Retry before falling back to offline mode. If still fails, use built-in checks in `type-prompt.md`, note "offline mode - [error reason]" in report.
+**If WebFetch fails**: Use built-in checks in `type-prompt.md`, note "offline mode - [error reason]" in report.
 
 ### Step 1: Detection & Classification
 
@@ -140,12 +103,6 @@ Composite    → Apply all + cross-*.md
 ```
 
 ### Step 2: Execute Universal Checks (ALL TYPES)
-
-> **FIRST**: Execute Principle 0 (GPT Guide Compliance) checks before proceeding.
-
-**GPT Guide Compliance Check (MANDATORY FIRST):**
-
-Execute each check from Principle 0 table, record status and evidence (line numbers, quotes).
 
 **Every audit MUST execute these checks from `rules-universal.md`:**
 
@@ -162,7 +119,6 @@ Execute each check from Principle 0 table, record status and evidence (line numb
 | Process Logic | If process/flow defined: (1) all scenarios covered, (2) main flow clear, (3) no dead loops, (4) no conflicting invocations | "Process: N scenarios, M flow issues" |
 | Output & i18n | If output format defined: (1) format specification complete, (2) language control correct (if i18n configured), (3) no hardcoded language-specific content | "Output: N format issues, M i18n issues" |
 | Prompt Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims, (6) Tool preference over internal knowledge, (7) Agentic updates brief with concrete outcomes, (8) Long-context outline for >10k tokens | "Prompt: N verbosity, M scope, K grounding, L tool, P agentic issues" |
-| Conversational/Multi-Phase | If content has phases: (1) constraints at TOP, (2) explicit stop conditions, (3) scope drift prevention, (4) phase gates, (5) **constraint centralization** (rules in ≤3 locations), (6) **stop condition strength** (strong vs weak), (7) **prohibition language strength** ("禁止/Do NOT" vs "不要/don't") | "Conversational: N issues (centralization: X, stop strength: Y, prohibition: Z)" |
 
 **Numbering Check Execution** (commonly missed):
 1. Find all numbered lists (1. 2. 3. or Step 0, Step 1, etc.)
@@ -181,7 +137,6 @@ Execute each check from Principle 0 table, record status and evidence (line numb
 | Content Quality | Specific instructions? Not vague? |
 | LLM Best Practices | Freedom level match? Grounding? Ambiguity handling? |
 | Prompt Compliance | Verbosity limits? "Do not" list? No fabrication? Schema? Self-check? |
-| Conversational/Multi-Phase | If has phases: constraints at TOP? Stop conditions (strong)? Scope drift prevention? Phase gates? **Constraint centralization?** **Prohibition language strength?** |
 | Audit Checklist | Execute all Fatal/Severe/Warning checks at end of file |
 
 #### For Memory Files (`type-memory.md`):
@@ -196,11 +151,10 @@ Execute each check from Principle 0 table, record status and evidence (line numb
 | Check Category | Action |
 |----------------|--------|
 | Directory Validation | SKILL.md exists? Correct filename? |
-| Frontmatter | name (≤64 chars), description (≤1024 chars, character count not bytes), triggers in description? |
+| Frontmatter | name, description, triggers present? |
 | Body Size | SKILL.md: ≤500 ideal, >625 warning. References: no limit, evaluate by content |
 | Script Integrity | Declared scripts exist? Imports valid? Shebang? Error handling? |
 | References | Has "when to read" guidance? |
-| Conversational/Multi-Phase | If body has phases: apply checks from `type-prompt.md` including **constraint centralization**, **stop condition strength**, **prohibition language** |
 
 #### For Plugins (`type-plugin.md`):
 | Check Category | Action |
@@ -252,8 +206,6 @@ For each suspected issue, verify ALL points:
 4. **Threshold met** - Above quantified threshold?
 
 If ANY fails → Discard the issue (move to Filtered)
-
-**For "missing/incomplete" issues**: Re-read the source content fully before confirming. ASCII diagrams are prone to parsing errors on first scan.
 
 ### Step 5b: Fix Proposal Verification (Principle Check)
 

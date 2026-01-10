@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-CC%20BY%204.0-green.svg)](./hello-auditkit/references/)
-[![Version](https://img.shields.io/badge/version-2.0.0-orange.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./CHANGELOG.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 [简体中文](./README_CN.md) · [English](./README.md) · [快速开始](#-快速开始) · [文档](#-文档)
@@ -74,6 +74,34 @@
 - 超过严重性阈值
 
 **你的收益：** 没有误报淹没真实问题
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**📋 GPT 指南合规**
+
+基于最新 GPT Prompting Guide 的强制检查：
+- 冗余度约束是否存在
+- 范围约束与"禁止"列表
+- 多阶段内容的停止条件
+- 无虚构指令
+
+**你的收益：** 行业标准的 prompt 质量
+
+</td>
+<td width="50%">
+
+**🔄 对话/多阶段检查**
+
+针对多阶段内容的专项检查：
+- 约束集中化（≤3 处）
+- 停止条件强度验证
+- 禁止语言强度
+- 阶段门验证
+
+**你的收益：** 可靠的多轮 AI 行为
 
 </td>
 </tr>
@@ -314,6 +342,12 @@ flowchart TD
 <tr><th>概念</th><th>定义</th><th>重要性</th></tr>
 
 <tr>
+<td><strong>GPT 指南合规</strong></td>
+<td>强制检查：冗余度约束、范围约束、停止条件、无虚构</td>
+<td>确保 prompt 达到行业标准质量</td>
+</tr>
+
+<tr>
 <td><strong>4 点验证</strong></td>
 <td>每个问题必须通过：场景测试、范围检查、缺陷 vs 选择、阈值检查</td>
 <td>消除浪费你时间的误报</td>
@@ -335,6 +369,12 @@ flowchart TD
 <td><strong>大小容忍度</strong></td>
 <td>≤10% 超限 = 不是问题</td>
 <td>避免吹毛求疵，专注真实问题</td>
+</tr>
+
+<tr>
+<td><strong>Grounding</strong></td>
+<td>基于实际内容得出结论；绝不虚构细节</td>
+<td>确保审计准确性和可信度</td>
 </tr>
 
 </table>
@@ -519,7 +559,22 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 ## 📈 版本历史
 
-### 最新：2.0.0 🎉
+### 最新：1.0.2 🎉
+
+**新功能：**
+- ✨ GPT Prompting Guide 合规作为强制审计标准（原则 0）
+- ✨ Grounding & No Fabrication 原则（原则 6）
+- ✨ 对话/多阶段内容检查
+- ✨ Agentic Updates 和 Tool Parallelization 指导
+
+**改进：**
+- 📦 Step 0 提升为 GPT 指南合规的强制标准
+- 📦 增强 frontmatter 验证（description ≤1024 字符，按字符计数）
+- 📦 Step 5 中 ASCII 图表解析错误处理
+- 📦 约束集中化检查（≤3 处）
+- 📦 停止条件和禁止语言强度验证
+
+### 上一版：2.0.0
 
 **新功能：**
 - ✨ 完整的规则系统重组

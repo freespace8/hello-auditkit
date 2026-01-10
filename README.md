@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
 [![Documentation](https://img.shields.io/badge/docs-CC%20BY%204.0-green.svg)](./hello-auditkit/references/)
-[![Version](https://img.shields.io/badge/version-2.0.0-orange.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./CHANGELOG.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
 
 [简体中文](./README_CN.md) · [English](./README.md) · [Quick Start](#-quick-start) · [Documentation](#-documentation)
@@ -74,6 +74,34 @@ Every issue must pass rigorous validation:
 - Above severity threshold
 
 **Your benefit:** No false positives drowning real issues
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**📋 GPT Guide Compliance**
+
+Mandatory checks based on latest GPT Prompting Guide:
+- Verbosity constraints present
+- Scope discipline with "do not" list
+- Stop conditions for multi-phase content
+- No fabrication instructions
+
+**Your benefit:** Industry-standard prompt quality
+
+</td>
+<td width="50%">
+
+**🔄 Conversational/Multi-Phase**
+
+Specialized checks for multi-phase content:
+- Constraint centralization (≤3 locations)
+- Stop condition strength validation
+- Prohibition language strength
+- Phase gate verification
+
+**Your benefit:** Reliable multi-turn AI behavior
 
 </td>
 </tr>
@@ -314,6 +342,12 @@ After (Verified):
 <tr><th>Concept</th><th>Definition</th><th>Why It Matters</th></tr>
 
 <tr>
+<td><strong>GPT Guide Compliance</strong></td>
+<td>Mandatory checks: verbosity constraints, scope discipline, stop conditions, no fabrication</td>
+<td>Ensures prompts meet industry-standard quality</td>
+</tr>
+
+<tr>
 <td><strong>4-Point Verification</strong></td>
 <td>Every issue must pass: scenario test, scope check, flaw vs choice, threshold check</td>
 <td>Eliminates false positives that waste your time</td>
@@ -335,6 +369,12 @@ After (Verified):
 <td><strong>Size Tolerance</strong></td>
 <td>≤10% over limit = NOT an issue</td>
 <td>Avoids nitpicking, focuses on real problems</td>
+</tr>
+
+<tr>
+<td><strong>Grounding</strong></td>
+<td>Base findings on actual content; never fabricate details</td>
+<td>Ensures audit accuracy and trustworthiness</td>
 </tr>
 
 </table>
@@ -519,7 +559,22 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 ## 📈 Version History
 
-### Latest: 2.0.0 🎉
+### Latest: 1.0.2 🎉
+
+**New Features:**
+- ✨ GPT Prompting Guide Compliance as mandatory audit standard (Principle 0)
+- ✨ Grounding & No Fabrication principle (Principle 6)
+- ✨ Conversational/Multi-Phase content checks
+- ✨ Agentic Updates and Tool Parallelization guidance
+
+**Improvements:**
+- 📦 Step 0 elevated to MANDATORY STANDARD for GPT Guide compliance
+- 📦 Enhanced frontmatter validation (description ≤1024 chars, character count)
+- 📦 ASCII diagram parsing error handling in Step 5
+- 📦 Constraint centralization checks (≤3 locations)
+- 📦 Stop condition and prohibition language strength validation
+
+### Previous: 2.0.0
 
 **New Features:**
 - ✨ Complete rule system reorganization

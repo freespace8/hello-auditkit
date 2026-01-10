@@ -22,7 +22,7 @@
 
 ## Dimension 0: Structure
 
-### 0.1 Manifest Validation (plugin.json only)
+### 0.1 Manifest Validation
 
 | Check | Expected | Severity |
 |-------|----------|----------|
@@ -31,7 +31,7 @@
 | `name` field present | Yes | Fatal |
 | `name` kebab-case, ≤50 chars | Yes | Warning |
 | `version` follows semver | Yes | Warning |
-| `description` ≤200 chars (plugin.json only; skill description ≤1024 chars) | Yes | Warning |
+| `description` ≤200 chars | Yes | Warning |
 
 ### 0.2 Directory Structure
 

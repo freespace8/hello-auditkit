@@ -101,9 +101,6 @@ User may:
 | Data extraction | Strict schema | Severe if unstructured |
 | Creative/flexible tasks | Guidelines only | Warning if over-constrained |
 | Code generation | Patterns + flexibility | Warning if too rigid |
-| Conversational/multi-phase | Strong constraints + explicit gates | Severe if rules scattered or gates missing |
-
-> **Note**: For conversational/multi-phase content, see `type-prompt.md` → Conversational/Multi-Phase Prompt Rules for detailed checks.
 
 ### Conciseness Principle
 
@@ -182,10 +179,6 @@ User may:
 
 > **Execution Required**: If diagrams exist, verify each node has text description and all paths have endpoints.
 
-### Directory Tree Verification
-
-Before reporting "tree incomplete" or "missing files": re-read and fully parse the tree structure to confirm. ASCII tree characters can cause parsing errors on first scan.
-
 ### Diagram-Text Consistency
 
 | Check | Requirement | Severity |
@@ -253,21 +246,21 @@ Before reporting "tree incomplete" or "missing files": re-read and fully parse t
 >
 > **Version Policy**: Always use the **latest version** as authoritative source. When multiple versions exist, prefer the highest version number (e.g., gpt-5.2 over gpt-5.1 over gpt-5).
 
-#### Recommended Wording Patterns (from GPT Guide)
+#### Recommended Wording Patterns
 
-| Pattern | GPT Guide Recommended Wording | Purpose | Severity if Missing |
-|---------|-------------------------------|---------|---------------------|
+| Pattern | Recommended Wording | Purpose | Severity if Missing |
+|---------|---------------------|---------|---------------------|
 | Verbosity constraint | "≤N sentences", "≤N bullets", "≤N words" | Explicit length control | Warning |
 | Scope constraint | "EXACTLY and ONLY what requested" | Prevent feature creep | Warning |
 | Prohibition list | "Do NOT: [specific items]" | Clear boundaries | Warning |
-| Context grounding | "Based on provided context" | Prevent hallucination | Warning |
+| Context grounding | "Based on provided context", "Use ONLY the text inside [Context]" | Prevent hallucination | Warning |
 | No fabrication | "Never fabricate exact figures, line numbers, or external references" | Factual accuracy | Severe |
-| Ambiguity handling | "1-3 clarifying questions OR 2-3 interpretations with assumption labels" | Handle uncertainty | Warning |
+| Evidence check | "Before answering, verify that [X] is explicitly present in [Context]" | Grounding verification | Warning |
+| Ambiguity handling | "If unclear: provide 1-3 clarifying questions OR 2-3 interpretations with assumption labels" | Handle uncertainty | Warning |
 | Completion definition | Explicit stop condition or "done when" criteria | Prevent overthinking | Warning |
-| Strong stop condition | Explicit stop + prohibition of continuation | Enforce phase gates | Severe |
-| Centralized constraints | All critical rules in dedicated block at TOP | Prevent selective compliance | Severe |
+| Hedging language | "Based on provided context...", "typically", "generally" | Avoid absolute claims | Warning |
 
-#### Wording Anti-Patterns (GPT Guide Official Warnings)
+#### Wording Anti-Patterns (Official Warnings)
 
 | Anti-Pattern | Examples | Why Problematic | Severity |
 |--------------|----------|-----------------|----------|
@@ -275,12 +268,9 @@ Before reporting "tree incomplete" or "missing files": re-read and fully parse t
 | Vague verbosity | "Be concise", "Keep it short" | No measurable constraint | Warning |
 | Absolute claims | "Always", "Never", "Guaranteed" (without qualification) | Lacks grounding | Warning |
 | Maximize language | "Analyze everything", "Be thorough" | Causes overthinking/over-tool-calling | Warning |
-| Contradictory instructions | Conflicting rules in same prompt | Reasoning models waste tokens reconciling | Severe |
-| Scattered constraints | Critical rules in >3 locations | Selectively followed, weaker enforcement | Severe |
-| Weak prohibition language | Soft language for critical constraints | Less effective than strong prohibitions | Warning |
-| Soft stop conditions | Vague wait language without explicit stop | AI may continue despite instruction | Warning |
+| Contradictory instructions | Conflicting rules in same prompt | Modern reasoning models waste tokens reconciling (more damaging than other models) | Severe |
 
-**Audit approach**: Check if instructions use GPT Guide recommended wording patterns. Flag when vague, absolute, or anti-pattern language is used where qualified language is appropriate.
+**Audit approach**: Check if instructions use LLM-recommended wording patterns. Flag when vague, absolute, or anti-pattern language is used where qualified language is appropriate.
 
 ---
 
