@@ -4,10 +4,10 @@
 
 **Enterprise-grade audit system for AI coding assistant configurations — catch issues before they cause problems**
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Documentation](https://img.shields.io/badge/docs-CC%20BY%204.0-green.svg)](./hello-auditkit/references/)
-[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./CHANGELOG.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./hello-auditkit/SKILL.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/hellowind777/hello-auditkit/pulls)
 
 [简体中文](./README_CN.md) · [English](./README.md) · [Quick Start](#-quick-start) · [Documentation](#-documentation)
 
@@ -40,7 +40,7 @@
 
 - ❌ General code review (use dedicated linters)
 - ❌ Runtime monitoring (this is static analysis)
-- ❌ Auto-fixing issues (provides recommendations, not auto-apply)
+- ❌ Unattended auto-fixing (fixes are proposed; apply only after explicit confirmation)
 
 ---
 
@@ -55,10 +55,11 @@
 **🔍 Multi-Type Audit**
 
 Comprehensive coverage for all AI assistant configurations:
-- Prompts (standalone markdown/text)
+- Any text/file (pasted directly, or loaded from any file regardless of filename)
 - Memory files (AGENTS.md, CLAUDE.md, GEMINI.md)
 - Skills (SKILL.md + references)
 - Plugins (hooks, commands, agents, MCP/LSP)
+- Composites (multi-file systems: memory + skills/plugins)
 
 **Your benefit:** One tool for your entire AI configuration ecosystem
 
@@ -130,8 +131,8 @@ Supports: en-US, zh-CN, zh-TW, ja-JP, ko-KR, es-ES, fr-FR, de-DE
 ### 📊 By the Numbers
 
 - **4-point** verification prevents false positives
-- **11** content types supported (prompts, memory, skills, plugins, etc.)
-- **6** severity levels with quantified thresholds
+- **7** content types supported (any text/file, AGENTS.md, CLAUDE.md, GEMINI.md, skills, plugins, composites)
+- **4** severity levels with quantified thresholds (Must Fix / Should Fix / Optional / Filtered)
 - **Zero** guesswork — every issue backed by concrete scenarios
 
 ---
@@ -173,6 +174,10 @@ cp -r hello-auditkit ~/.claude/skills/
 "Check this plugin configuration"
 ```
 
+**Notes:**
+- If you invoke the skill without a target, it will show a welcome message and ask for a file path, directory path, or pasted content.
+- **Phase gate:** After generating the report, it **stops**. To apply fix proposals (if any), reply with `1`, `1,2`, `1-3`, or `all`.
+
 ### First Use Example
 
 ```
@@ -208,6 +213,10 @@ Hello-AuditKit:
 ### 5. Conclusion
 ✅ Pass — No critical issues found
 ```
+
+### 📸 Latest Usage Screenshot
+
+![Hello-AuditKit latest usage screenshot](./screenshot.png)
 
 ---
 
@@ -573,6 +582,8 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 - 📦 ASCII diagram parsing error handling in Step 5
 - 📦 Constraint centralization checks (≤3 locations)
 - 📦 Stop condition and prohibition language strength validation
+- 📦 Added explicit entry point + target selection (welcome prompt when no target)
+- 📦 Added phase gate requiring explicit user confirmation before applying any fixes
 
 ### Previous: 2.0.0
 

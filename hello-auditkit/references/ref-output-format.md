@@ -370,6 +370,7 @@ Same format as 4.1, with additional field:
 ### 5. Conclusion
 
 > **CRITICAL**: This is the FINAL section. NO content after "Recommended Actions" table.
+> **PHASE GATE**: After outputting this section, STOP and wait for user input. Do NOT apply any fixes until user confirms.
 
 **Required subsections (in order)**:
 
@@ -409,7 +410,8 @@ One sentence summarizing: confirmed count, filtered count, overall quality, main
 **Rules**:
 - User inputs: single "1", multiple "1,2", range "1-3", or "all"
 - Use output language configured at top of SKILL.md
-- This is the FINAL OUTPUT - wait for user input
+- **STOP HERE** - This is the FINAL OUTPUT. Wait for user selection before applying any changes.
+- Do NOT automatically apply fixes. User must explicitly confirm which fixes to apply.
 
 ---
 

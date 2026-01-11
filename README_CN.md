@@ -4,10 +4,10 @@
 
 **企业级 AI 编码助手配置审计系统 — 在问题发生前发现它们**
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Documentation](https://img.shields.io/badge/docs-CC%20BY%204.0-green.svg)](./hello-auditkit/references/)
-[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./CHANGELOG.md)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./hello-auditkit/SKILL.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/hellowind777/hello-auditkit/pulls)
 
 [简体中文](./README_CN.md) · [English](./README.md) · [快速开始](#-快速开始) · [文档](#-文档)
 
@@ -40,7 +40,7 @@
 
 - ❌ 通用代码审查（请使用专门的 linter）
 - ❌ 运行时监控（这是静态分析）
-- ❌ 自动修复问题（提供建议，不自动应用）
+- ❌ 无人值守的自动修复（会给出建议；仅在你明确确认后才会应用）
 
 ---
 
@@ -55,10 +55,11 @@
 **🔍 多类型审计**
 
 全面覆盖所有 AI 助手配置：
-- Prompts（独立 markdown/文本）
+- 任意文本/文件（可直接粘贴，或从任意文件加载，不依赖文件名）
 - Memory 文件（AGENTS.md、CLAUDE.md、GEMINI.md）
 - Skills（SKILL.md + references）
 - Plugins（hooks、commands、agents、MCP/LSP）
+- Composite（多文件组合系统：memory + skills/plugins）
 
 **你的收益：** 一个工具覆盖整个 AI 配置生态系统
 
@@ -130,8 +131,8 @@
 ### 📊 数据说话
 
 - **4 点** 验证防止误报
-- **11** 种内容类型支持（prompts、memory、skills、plugins 等）
-- **6** 个严重级别，量化阈值
+- **7** 种内容类型支持（提示词文本/任意文件、AGENTS.md、CLAUDE.md、GEMINI.md、skills、plugins、composite）
+- **4** 个严重级别，量化阈值（Must Fix / Should Fix / Optional / Filtered）
 - **零** 猜测 — 每个问题都有具体场景支撑
 
 ---
@@ -173,6 +174,10 @@ cp -r hello-auditkit ~/.claude/skills/
 "检查这个插件配置"
 ```
 
+**提示：**
+- 如果你在没有提供审计目标的情况下触发该 skill，它会先显示欢迎/用法说明，并提示你提供文件路径、目录路径或直接粘贴内容。
+- **阶段门（PHASE GATE）：** 生成审计报告后会**停止等待**。如需应用修复建议（若有），请回复 `1`、`1,2`、`1-3` 或 `all`。
+
 ### 首次使用示例
 
 ```
@@ -208,6 +213,10 @@ Hello-AuditKit：
 ### 5. 结论
 ✅ 通过 — 未发现严重问题
 ```
+
+### 📸 最新使用截图
+
+![Hello-AuditKit 最新使用截图](./screenshot.png)
 
 ---
 
@@ -573,6 +582,8 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 - 📦 Step 5 中 ASCII 图表解析错误处理
 - 📦 约束集中化检查（≤3 处）
 - 📦 停止条件和禁止语言强度验证
+- 📦 增加明确的入口交互与目标选择（无目标时展示欢迎提示）
+- 📦 增加阶段门：在未明确确认前不应用任何修复
 
 ### 上一版：2.0.0
 

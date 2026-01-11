@@ -18,7 +18,10 @@
 
 ## Overview
 
-**Applies to**: Standalone LLM prompts, system prompts, instruction text
+**Applies to**:
+- Standalone LLM prompts, system prompts, instruction text
+- **Any text content** (pasted directly or from any file, regardless of filename)
+- Default rule file for unrecognized content types
 
 **Key focus areas**:
 - Verbosity constraints (explicit length limits)

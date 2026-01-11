@@ -15,13 +15,44 @@ version: 1.0.2
 
 # Hello-AuditKit: AI Coding Assistant Audit System
 
+## Entry Point
+
+**On skill invocation, first determine the audit target:**
+
+| User Input | Action |
+|------------|--------|
+| No target specified | Show welcome message and usage guide (see below) |
+| File path provided | Audit the specified file |
+| Directory path provided | Scan and audit the directory |
+| Text content pasted | Audit as prompt text |
+
+**Welcome Message** (when no target):
+```
+👋 Hello-AuditKit - AI 配置审计工具
+
+支持审计：
+• 提示词文本（直接粘贴或任意文件）
+• Memory 文件（AGENTS.md, CLAUDE.md, GEMINI.md）
+• Skills（含 SKILL.md 的目录）
+• Plugins（含 .claude-plugin/ 的目录）
+
+使用方式：
+1. 粘贴要审计的提示词文本
+2. 提供文件路径：/path/to/file.md
+3. 提供目录路径：/path/to/skill/
+
+请提供要审计的内容或路径：
+```
+
+**CRITICAL**: After showing welcome, STOP and wait for user input. Do NOT proceed with audit until target is provided.
+
 ## Overview
 
 Comprehensive audit system for AI coding assistant configurations:
 
 | Content Type | Identification | Rule File |
 |--------------|----------------|-----------|
-| **Prompts** | Any text/markdown prompt | `type-prompt.md` |
+| **Any Text/File** | Pasted text or any file (any filename) | `type-prompt.md` |
 | **AGENTS.md** | Codex agent instructions | `type-memory.md` |
 | **CLAUDE.md** | Claude Code memory files | `type-memory.md` |
 | **GEMINI.md** | Gemini CLI context files | `type-memory.md` |
@@ -132,11 +163,11 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 Scan path → identify type → load appropriate rules:
 
 ```
-Prompt       → type-prompt.md
-Memory file  → type-memory.md
-Skill        → type-skill.md
-Plugin       → type-plugin.md
-Composite    → Apply all + cross-*.md
+Any text/file   → type-prompt.md (default for unrecognized types)
+Memory file     → type-memory.md (AGENTS.md, CLAUDE.md, GEMINI.md)
+Skill           → type-skill.md (directory with SKILL.md)
+Plugin          → type-plugin.md (directory with .claude-plugin/)
+Composite       → Apply all + cross-*.md
 ```
 
 ### Step 2: Execute Universal Checks (ALL TYPES)
@@ -287,6 +318,16 @@ Follow `references/ref-output-format.md` for structure.
 **Section 3 Issue Inventory MUST include:**
 - Verification Statistics: "Scanned X → Verified Y → Filtered Z"
 - Both Confirmed and Filtered issues with filter reasons
+
+### Step 7: Wait for User Confirmation (PHASE GATE)
+
+> **CRITICAL**: After generating the report, STOP and wait for user input. Do NOT apply any fixes automatically.
+
+**User interaction flow:**
+1. Output complete audit report (Sections 0-5)
+2. **STOP** - Wait for user to select which fixes to apply
+3. Only after user confirms (e.g., "1", "1,2", "all") → Apply selected fixes
+4. If user provides no selection → Do nothing, wait
 
 ## Reference Files
 
