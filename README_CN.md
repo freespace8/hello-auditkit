@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Documentation](https://img.shields.io/badge/docs-CC%20BY%204.0-green.svg)](./hello-auditkit/references/)
-[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./hello-auditkit/SKILL.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-orange.svg)](./hello-auditkit/SKILL.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/hellowind777/hello-auditkit/pulls)
 
 [简体中文](./README_CN.md) · [English](./README.md) · [快速开始](#-快速开始) · [文档](#-文档)
@@ -19,7 +19,7 @@
 
 **痛点：** AI 编码助手的配置（prompts、skills、plugins）经常隐藏着问题 — 断开的引用、矛盾的规则、臃肿的内容 — 导致意外行为。
 
-**解决方案：** 一个严谨的审计系统，通过 4 点验证捕获真实问题，同时过滤误报。
+**解决方案：** 一个严谨的审计系统，通过 5 点验证捕获真实问题，同时过滤误报。
 
 | 挑战 | 没有 Hello-AuditKit | 有 Hello-AuditKit |
 |------|---------------------|-------------------|
@@ -27,7 +27,7 @@
 | **规则冲突** | 行为矛盾 | 检测冲突并提供解决建议 |
 | **内容臃肿** | 响应慢，上下文溢出 | 分级阈值警告 |
 | **模糊指令** | AI 行为不一致 | 检测歧义模式 |
-| **误报** | 噪音淹没真实问题 | 4 点验证过滤非问题 |
+| **误报** | 噪音淹没真实问题 | 5 点验证过滤非问题 |
 
 ### 💡 最适合
 
@@ -66,11 +66,12 @@
 </td>
 <td width="50%">
 
-**✅ 4 点验证**
+**✅ 5 点验证**
 
 每个问题必须通过严格验证：
 - 存在具体的失败场景
 - 在设计范围内
+- 功能能力已验证
 - 是设计缺陷，不是设计选择
 - 超过严重性阈值
 
@@ -130,7 +131,7 @@
 
 ### 📊 数据说话
 
-- **4 点** 验证防止误报
+- **5 点** 验证防止误报
 - **7** 种内容类型支持（提示词文本/任意文件、AGENTS.md、CLAUDE.md、GEMINI.md、skills、plugins、composite）
 - **4** 个严重级别，量化阈值（Must Fix / Should Fix / Optional / Filtered）
 - **零** 猜测 — 每个问题都有具体场景支撑
@@ -187,7 +188,7 @@ Hello-AuditKit：
 1. 检测内容类型 → Memory 文件
 2. 加载 type-memory.md 规则
 3. 执行通用检查（命名、引用、大小）
-4. 应用 4 点验证
+4. 应用 5 点验证
 5. 生成结构化报告
 ```
 
@@ -248,7 +249,7 @@ flowchart TD
     CrossCutting -->|否| Verify
     Cross --> Verify
 
-    Verify[4 点验证] --> Filter{全部通过?}
+    Verify[5 点验证] --> Filter{全部通过?}
     Filter -->|是| Confirm[✅ 确认问题]
     Filter -->|否| Discard[⚪ 已过滤]
 
@@ -314,7 +315,7 @@ flowchart TD
 <tr>
 <td><strong>4. 验证</strong></td>
 <td>
-• 4 点检查每个问题<br>
+• 5 点检查每个问题<br>
 • 过滤误报<br>
 • 分配严重级别
 </td>
@@ -357,8 +358,8 @@ flowchart TD
 </tr>
 
 <tr>
-<td><strong>4 点验证</strong></td>
-<td>每个问题必须通过：场景测试、范围检查、缺陷 vs 选择、阈值检查</td>
+<td><strong>5 点验证</strong></td>
+<td>每个问题必须通过：场景测试、范围检查、功能能力、缺陷 vs 选择、阈值检查</td>
 <td>消除浪费你时间的误报</td>
 </tr>
 
@@ -395,7 +396,7 @@ flowchart TD
 | 必须修复 | 🔴 | 功能损坏，或 ≥60% 执行者失败 |
 | 建议修复 | 🟡 | 影响质量，或 ≥40% 结果不佳 |
 | 可选优化 | 🟢 | 提升体验，非必需 |
-| 已过滤 | ⚪ | 未通过 4 点验证 |
+| 已过滤 | ⚪ | 未通过 5 点验证 |
 
 ### 参考文件
 
@@ -432,13 +433,14 @@ flowchart TD
 </details>
 
 <details>
-<summary><strong>Q：什么是"4 点验证"？</strong></summary>
+<summary><strong>Q：什么是"5 点验证"？</strong></summary>
 
-**A：** 每个疑似问题必须通过 4 项检查才能被确认：
+**A：** 每个疑似问题必须通过 5 项检查才能被确认：
 1. 能描述具体的失败场景吗？
 2. 在设计范围内吗？
-3. 是缺陷（非故意）还是选择（故意）？
-4. 达到严重性阈值了吗？
+3. 实现是否匹配声称的能力？
+4. 是缺陷（非故意）还是选择（故意）？
+5. 达到严重性阈值了吗？
 
 任何一项检查失败，问题就会被过滤。
 </details>
@@ -520,14 +522,14 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 **问题：** 过滤的问题太多
 
-**原因：** 正常 — 4 点验证设计上就是严格的
+**原因：** 正常 — 5 点验证设计上就是严格的
 
 **解决方案：**
 ```markdown
 # 过滤的问题是为了透明度而显示的
 # 如果你认为某个问题应该被确认：
 1. 检查过滤原因（FR-AI、FR-DS 等）
-2. 审查 methodology-core.md 中的 4 点标准
+2. 审查 methodology-core.md 中的 5 点标准
 3. 如果标准不适合你的用例，调整阈值
 ```
 
@@ -568,7 +570,21 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 ## 📈 版本历史
 
-### 最新：1.0.2 🎉
+### 最新：1.1.0 🎉
+
+**新功能：**
+- ✨ GPT-5.2 合规：关键约束的 XML 标签强制要求
+- ✨ 5 点验证（新增功能能力检查）
+- ✨ GPT-5.2 特定检查（禁止任务扩展、禁止重述、设计系统探索）
+- ✨ SKILL.md 新增目录导航
+
+**改进：**
+- 📦 Agentic/多阶段 prompts 需要 XML 标签（`<output_verbosity_spec>`、`<design_and_scope_constraints>`、`<user_updates_spec>` 等）
+- 📦 增强 Prompt 合规检查，包含 XML 结构强制
+- 📦 扩展 rules-universal.md 和 type-prompt.md，增加 GPT-5.2 指南
+- 📦 报告输出规范，严格的章节顺序和表格格式
+
+### 上一版：1.0.2
 
 **新功能：**
 - ✨ GPT Prompting Guide 合规作为强制审计标准（原则 0）
@@ -589,7 +605,7 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 **新功能：**
 - ✨ 完整的规则系统重组
-- ✨ 4 点验证方法论
+- ✨ 5 点验证方法论
 - ✨ 渐进加载架构（L1-L4）
 - ✨ 多语言输出支持
 

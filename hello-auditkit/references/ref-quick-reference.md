@@ -49,7 +49,7 @@
 
 ---
 
-## 4-Point Verification
+## 5-Point Verification
 
 ```
 Issue Detected
@@ -58,9 +58,11 @@ Issue Detected
     ↓ YES
 2. In Design Scope? → NO → Discard
     ↓ YES
-3. Flaw or Choice? → Choice → Discard
+3. Functional Capability? → NO → Discard
+    ↓ YES
+4. Flaw or Choice? → Choice → Discard
     ↓ Flaw
-4. Meets Threshold? → NO → Discard
+5. Meets Threshold? → NO → Discard
     ↓ YES
 Mark as Issue
 ```

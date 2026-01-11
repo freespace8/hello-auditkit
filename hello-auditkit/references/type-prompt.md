@@ -195,6 +195,8 @@ Before outputting, re-scan answer for:
 | Major phases only | Not routine tool calls | Warning |
 | Concrete outcomes | Each update has specific result | Warning |
 | No narration | Avoid "thinking out loud" | Info |
+| No task expansion | Do NOT expand beyond user request; flag optional work | Severe |
+| No rephrasing | Do NOT rephrase user's request unless it changes semantics | Warning |
 
 ### Structured Extraction
 
@@ -216,11 +218,122 @@ Before outputting, re-scan answer for:
 | Data extraction | Low | Strict schema | Severe if unstructured |
 | Safety-critical | Very Low | Explicit scripts | Severe if too loose |
 
+### Web Search & Research Rules (GPT-5.2)
+
+> **Source**: GPT-5.2 Prompting Guide - Comprehensive Web Research Agent specification
+>
+> **Applies to**: Prompts that involve web search, research, or information gathering
+
+#### Factuality Requirements (Non-Negotiable)
+
+| Scenario | Requirement | Severity |
+|----------|-------------|----------|
+| Time-sensitive topics | MUST browse web (news, prices, laws, product specs, rankings) | Severe |
+| Updated/niche topics | MUST browse (weather, exchange rates, standards, software libraries) | Severe |
+| Travel/recommendations | MUST browse for current information | Warning |
+| Uncertain terminology | MUST browse to verify | Warning |
+| News queries | Prioritize recent events; compare publish dates explicitly | Warning |
+
+#### Citation Requirements
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| Citations present | Required after each paragraph with web-derived claims | Severe |
+| No fabricated citations | Never invent citations | Severe |
+| Multiple sources | Use multiple sources for key claims | Warning |
+| Primary sources | Prioritize primary sources and quality outlets | Warning |
+
+#### Research Methodology
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| Multiple targeted searches | Start with multiple searches; use parallel when helpful | Warning |
+| Follow-up searches | Add targeted follow-ups to fill gaps, resolve disagreements | Warning |
+| Recent updates check | Check for recent updates on time-sensitive topics | Warning |
+| Sufficient coverage | Gather sufficient coverage for comparisons and tradeoffs | Warning |
+| Continue until complete | Iterate until additional searching unlikely to change answer | Warning |
+| Evidence-based | If evidence thin, continue searching rather than guessing | Severe |
+
+**Stop conditions** (all must be true):
+- User's question and every subpart answered
+- Concrete examples and high-value adjacent material found
+- Sufficient sources for core claims located
+
+#### Writing Guidelines (Research Output)
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| Direct start | Start answering immediately, no preamble | Warning |
+| Comprehensive | Answer every query part; detailed unless simplistic request | Warning |
+| Simple language | Full sentences, short words, concrete verbs, active voice | Info |
+| Readable formatting | Markdown, section labels, bullets, tables for comparisons | Warning |
+| No follow-up questions | Do NOT add follow-up questions unless explicitly requested | Warning |
+
+#### Value-Add Behavior
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| Concrete examples | Named entities, mechanisms, case examples, specific numbers/dates | Warning |
+| Not overly brief | Include relevant, well-sourced material supporting user goals | Warning |
+| Adjacent material | Add adjacent well-researched material when it helps | Info |
+| Completeness pass | Answer all subparts, include explanation + concrete detail | Warning |
+
+#### Handling Inability to Comply
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| No blunt refusal | Don't lead with refusal if partial help available | Warning |
+| Deliver what's possible | First deliver what's safe and possible | Warning |
+| State limitations | Clearly state limitations after delivering help | Warning |
+| Suggest next steps | If unverifiable, explain what was verified, suggest next steps | Info |
+
 ---
 
 ## Prompt Compliance Checks
 
 > **Execution Required**: For prompts targeting modern LLMs (GPT-5+, Claude, Gemini, etc.), verify these checks.
+
+### XML Structure Enforcement (GPT-5.2 MANDATORY)
+
+> **Source**: GPT-5.2 Prompting Guide - XML tags are the recommended method to enforce output structure.
+>
+> **CRITICAL**: This is a **strict audit rule**. Prompts without XML tags for critical constraints will experience format drift in multi-turn/agentic scenarios.
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| Has XML tags for verbosity | `<output_verbosity_spec>` wraps length constraints | Severe |
+| Has XML tags for scope | `<design_and_scope_constraints>` wraps boundaries | Severe |
+| Has XML tags for extraction | `<extraction_spec>` wraps schema (if extraction task) | Severe |
+| Has XML tags for updates | `<user_updates_spec>` wraps agent communication rules (if agentic) | Severe |
+| Has XML tags for uncertainty | `<uncertainty_and_ambiguity>` wraps hallucination prevention (if factual) | Severe |
+| Has XML tags for tools | `<tool_usage_rules>` wraps tool invocation rules (if tool-using) | Warning |
+| Has XML tags for long-context | `<long_context_handling>` wraps recall rules (if >10k tokens) | Warning |
+| Has XML tags for self-check | `<high_risk_self_check>` wraps validation (if high-risk) | Warning |
+
+**Audit execution**:
+1. Identify prompt type: agentic, extraction, factual, tool-using, long-context, high-risk
+2. For each applicable type, check if corresponding XML tags are present
+3. If XML tags missing → Flag with severity per table above
+4. **Exception**: Simple single-turn prompts without structured output may skip XML tags
+
+**Example of proper XML structure**:
+```xml
+<output_verbosity_spec>
+Default: 3-6 sentences or ≤5 bullets.
+Simple questions: ≤2 sentences.
+Complex tasks: 1 overview + ≤5 tagged bullets.
+</output_verbosity_spec>
+
+<design_and_scope_constraints>
+Implement EXACTLY and ONLY what requested.
+Do NOT add: extra features, uncontrolled styling, new UI elements.
+</design_and_scope_constraints>
+
+<uncertainty_and_ambiguity>
+If unclear: provide 1-3 clarifying questions OR 2-3 interpretations with assumption labels.
+Never fabricate exact figures, line numbers, or external references.
+</uncertainty_and_ambiguity>
+```
 
 ### Verbosity Compliance
 
@@ -447,6 +560,11 @@ The root cause of multi-phase prompt failures is usually: **critical constraints
 - [ ] Output format clear (schema for structured tasks)
 - [ ] No fabrication instruction (grounding)
 - [ ] Error handling addressed
+- [ ] **XML tags for verbosity** (`<output_verbosity_spec>`) - GPT-5.2+
+- [ ] **XML tags for scope** (`<design_and_scope_constraints>`) - GPT-5.2+
+- [ ] **XML tags for extraction** (`<extraction_spec>`) - if extraction task
+- [ ] **XML tags for updates** (`<user_updates_spec>`) - if agentic/multi-phase
+- [ ] **XML tags for uncertainty** (`<uncertainty_and_ambiguity>`) - if factual task
 
 ### Warnings
 - [ ] Instructions are specific, not vague
@@ -455,6 +573,9 @@ The root cause of multi-phase prompt failures is usually: **critical constraints
 - [ ] Well-structured if long (outline for >10k tokens)
 - [ ] Self-check for high-risk content
 - [ ] No absolute claims without hedging
+- [ ] XML tags for tools (`<tool_usage_rules>`) - if tool-using
+- [ ] XML tags for long-context (`<long_context_handling>`) - if >10k tokens
+- [ ] XML tags for self-check (`<high_risk_self_check>`) - if high-risk
 
 ### Info
 - [ ] Could benefit from more examples

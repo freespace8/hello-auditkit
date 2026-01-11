@@ -125,6 +125,20 @@ Check these items and report status with evidence:
 | Centralization | Critical rules concentrated (not scattered >3 locations) | Severe if scattered |
 | Prohibition strength | Strong language for critical constraints | Warning if weak |
 | No fabrication | Grounding instruction for factual tasks | Severe if missing |
+| **XML structure** | XML tags wrap critical constraints (GPT-5.2+) | Severe if missing for agentic/multi-phase |
+
+**XML Tags Compliance Check (GPT-5.2 MANDATORY)**:
+
+| Prompt Type | Required XML Tags | Severity if Missing |
+|-------------|-------------------|---------------------|
+| All with verbosity rules | `<output_verbosity_spec>` | Severe |
+| All with scope rules | `<design_and_scope_constraints>` | Severe |
+| Agentic/multi-phase | `<user_updates_spec>` | Severe |
+| Data extraction | `<extraction_spec>` | Severe |
+| Factual/grounding | `<uncertainty_and_ambiguity>` | Severe |
+| Tool-using | `<tool_usage_rules>` | Warning |
+| Long-context (>10k) | `<long_context_handling>` | Warning |
+| High-risk content | `<high_risk_self_check>` | Warning |
 
 Output format: Table showing each check with status (✅/⚠️/❌) and evidence (line number or description).
 

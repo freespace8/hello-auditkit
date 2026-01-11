@@ -6,7 +6,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Documentation](https://img.shields.io/badge/docs-CC%20BY%204.0-green.svg)](./hello-auditkit/references/)
-[![Version](https://img.shields.io/badge/version-1.0.2-orange.svg)](./hello-auditkit/SKILL.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-orange.svg)](./hello-auditkit/SKILL.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/hellowind777/hello-auditkit/pulls)
 
 [简体中文](./README_CN.md) · [English](./README.md) · [Quick Start](#-quick-start) · [Documentation](#-documentation)
@@ -19,7 +19,7 @@
 
 **The Problem:** AI coding assistant configurations (prompts, skills, plugins) often contain hidden issues — broken references, contradictory rules, bloated content — that cause unexpected behavior.
 
-**The Solution:** A rigorous audit system with 4-point verification that catches real issues while filtering out false positives.
+**The Solution:** A rigorous audit system with 5-point verification that catches real issues while filtering out false positives.
 
 | Challenge | Without Hello-AuditKit | With Hello-AuditKit |
 |-----------|------------------------|---------------------|
@@ -27,7 +27,7 @@
 | **Rule Conflicts** | Contradictory behavior | Conflicts detected with resolution suggestions |
 | **Content Bloat** | Slow response, context overflow | Size thresholds with tiered warnings |
 | **Vague Instructions** | Inconsistent AI behavior | Ambiguity patterns detected |
-| **False Positives** | Noise drowns real issues | 4-point verification filters non-issues |
+| **False Positives** | Noise drowns real issues | 5-point verification filters non-issues |
 
 ### 💡 Best For
 
@@ -66,11 +66,12 @@ Comprehensive coverage for all AI assistant configurations:
 </td>
 <td width="50%">
 
-**✅ 4-Point Verification**
+**✅ 5-Point Verification**
 
 Every issue must pass rigorous validation:
 - Concrete failure scenario exists
 - Within design scope
+- Functional capability verified
 - Design flaw, not choice
 - Above severity threshold
 
@@ -130,7 +131,7 @@ Supports: en-US, zh-CN, zh-TW, ja-JP, ko-KR, es-ES, fr-FR, de-DE
 
 ### 📊 By the Numbers
 
-- **4-point** verification prevents false positives
+- **5-point** verification prevents false positives
 - **7** content types supported (any text/file, AGENTS.md, CLAUDE.md, GEMINI.md, skills, plugins, composites)
 - **4** severity levels with quantified thresholds (Must Fix / Should Fix / Optional / Filtered)
 - **Zero** guesswork — every issue backed by concrete scenarios
@@ -187,7 +188,7 @@ Hello-AuditKit:
 1. Detects content type → Memory File
 2. Loads type-memory.md rules
 3. Executes universal checks (naming, references, size)
-4. Applies 4-point verification
+4. Applies 5-point verification
 5. Generates structured report
 ```
 
@@ -248,7 +249,7 @@ flowchart TD
     CrossCutting -->|No| Verify
     Cross --> Verify
 
-    Verify[4-Point Verification] --> Filter{Pass All 4?}
+    Verify[5-Point Verification] --> Filter{Pass All 5?}
     Filter -->|Yes| Confirm[✅ Confirmed Issue]
     Filter -->|No| Discard[⚪ Filtered]
 
@@ -314,7 +315,7 @@ flowchart TD
 <tr>
 <td><strong>4. Verification</strong></td>
 <td>
-• 4-point check each issue<br>
+• 5-point check each issue<br>
 • Filter false positives<br>
 • Assign severity
 </td>
@@ -357,8 +358,8 @@ After (Verified):
 </tr>
 
 <tr>
-<td><strong>4-Point Verification</strong></td>
-<td>Every issue must pass: scenario test, scope check, flaw vs choice, threshold check</td>
+<td><strong>5-Point Verification</strong></td>
+<td>Every issue must pass: scenario test, scope check, functional capability, flaw vs choice, threshold check</td>
 <td>Eliminates false positives that waste your time</td>
 </tr>
 
@@ -395,7 +396,7 @@ After (Verified):
 | Must Fix | 🔴 | Function broken, or ≥60% executors fail |
 | Should Fix | 🟡 | Quality impact, or ≥40% suboptimal results |
 | Optional | 🟢 | Enhances experience, not required |
-| Filtered | ⚪ | Did not pass 4-point verification |
+| Filtered | ⚪ | Did not pass 5-point verification |
 
 ### Reference Files
 
@@ -432,13 +433,14 @@ After (Verified):
 </details>
 
 <details>
-<summary><strong>Q: What does "4-point verification" mean?</strong></summary>
+<summary><strong>Q: What does "5-point verification" mean?</strong></summary>
 
-**A:** Every suspected issue must pass 4 checks before being confirmed:
+**A:** Every suspected issue must pass 5 checks before being confirmed:
 1. Can you describe a concrete failure scenario?
 2. Is this within the design scope?
-3. Is this a flaw (unintentional) or a choice (intentional)?
-4. Does it meet the severity threshold?
+3. Does the implementation match claimed capability?
+4. Is this a flaw (unintentional) or a choice (intentional)?
+5. Does it meet the severity threshold?
 
 If any check fails, the issue is filtered out.
 </details>
@@ -520,14 +522,14 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 **Problem:** Too many filtered issues
 
-**Cause:** Normal — 4-point verification is strict by design
+**Cause:** Normal — 5-point verification is strict by design
 
 **Solution:**
 ```markdown
 # Filtered issues are shown for transparency
 # If you believe an issue should be confirmed:
 1. Check the filter reason (FR-AI, FR-DS, etc.)
-2. Review the 4-point criteria in methodology-core.md
+2. Review the 5-point criteria in methodology-core.md
 3. If criteria are wrong for your use case, adjust thresholds
 ```
 
@@ -568,7 +570,21 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 ## 📈 Version History
 
-### Latest: 1.0.2 🎉
+### Latest: 1.1.0 🎉
+
+**New Features:**
+- ✨ GPT-5.2 Compliance: XML tags enforcement for critical constraints
+- ✨ 5-Point Verification (added Functional Capability check)
+- ✨ GPT-5.2 specific checks (no task expansion, no rephrasing, design system exploration)
+- ✨ Table of Contents navigation in SKILL.md
+
+**Improvements:**
+- 📦 XML tags required for agentic/multi-phase prompts (`<output_verbosity_spec>`, `<design_and_scope_constraints>`, `<user_updates_spec>`, etc.)
+- 📦 Enhanced Prompt Compliance checks with XML structure enforcement
+- 📦 Expanded rules-universal.md and type-prompt.md with GPT-5.2 guidelines
+- 📦 Report output spec with strict section ordering and table formats
+
+### Previous: 1.0.2
 
 **New Features:**
 - ✨ GPT Prompting Guide Compliance as mandatory audit standard (Principle 0)
@@ -589,7 +605,7 @@ ls ~/.claude/skills/hello-auditkit/SKILL.md
 
 **New Features:**
 - ✨ Complete rule system reorganization
-- ✨ 4-point verification methodology
+- ✨ 5-point verification methodology
 - ✨ Progressive loading architecture (L1-L4)
 - ✨ Multi-language output support
 

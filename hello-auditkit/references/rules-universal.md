@@ -267,6 +267,54 @@ Before reporting "tree incomplete" or "missing files": re-read and fully parse t
 | Strong stop condition | Explicit stop + prohibition of continuation | Enforce phase gates | Severe |
 | Centralized constraints | All critical rules in dedicated block at TOP | Prevent selective compliance | Severe |
 
+#### XML Tags for Structured Output (GPT-5.2 MANDATORY)
+
+> **Source**: GPT-5.2 Prompting Guide - XML tags enforce output structure and prevent format drift in agentic/multi-turn scenarios.
+
+**CRITICAL**: For prompts targeting GPT-5+ or agentic workflows, XML tags are the **recommended method** to enforce output structure. Without XML tags, output format compliance degrades significantly in multi-turn conversations.
+
+| XML Tag | Purpose | When Required | Severity if Missing |
+|---------|---------|---------------|---------------------|
+| `<output_verbosity_spec>` | Controls length and format | All prompts with verbosity requirements | Severe |
+| `<design_and_scope_constraints>` | Prevents feature creep | All prompts with scope boundaries | Severe |
+| `<long_context_handling>` | Improves recall on dense inputs | Prompts handling >10k tokens | Warning |
+| `<uncertainty_and_ambiguity>` | Mitigates hallucination | Factual/extraction tasks | Severe |
+| `<high_risk_self_check>` | Pre-finalization validation | Legal/financial/security content | Warning |
+| `<user_updates_spec>` | Structures agent communication | Agentic/multi-phase prompts | Severe |
+| `<tool_usage_rules>` | Governs tool invocation | Tool-using prompts | Warning |
+| `<extraction_spec>` | Enforces structured data output | Data extraction tasks | Severe |
+| `<web_search_rules>` | Directs research behavior | Research/search tasks | Warning |
+
+**Audit execution**:
+1. Check if prompt has structured output requirements
+2. If YES → Verify XML tags are used to enforce structure
+3. If XML tags missing for critical constraints → Flag as "Missing XML structure enforcement" (Severe)
+4. For agentic/multi-phase prompts without XML tags → Flag as "Format drift risk" (Severe)
+
+#### GPT-5.2 Behavioral Characteristics (Audit Awareness)
+
+> **Source**: GPT-5.2 Prompting Guide - Key Behavioral Differences
+
+**When auditing prompts for GPT-5.2+, be aware of these characteristics:**
+
+| Characteristic | Implication for Audit | Severity if Not Addressed |
+|----------------|----------------------|---------------------------|
+| More deliberate scaffolding | Benefits from explicit scope and verbosity constraints | Severe if missing |
+| Generally lower verbosity | More concise by default; still needs explicit preferences | Warning |
+| Stronger instruction adherence | Less drift from user intent; improved formatting | Info (positive) |
+| Tool efficiency trade-offs | May take additional tool actions; optimize via prompting | Warning |
+| Conservative grounding bias | Favors correctness; ambiguity handling improves with clarification prompts | Warning |
+
+**Audit checks for GPT-5.2 optimization:**
+
+| Check | Requirement | Severity |
+|-------|-------------|----------|
+| Explicit preferences | Articulate style preferences clearly (don't assume AI knows) | Warning |
+| Design system exploration | Include "Explore existing design systems" instruction | Warning |
+| No task expansion | Include "Do NOT expand beyond user request" | Severe |
+| No rephrasing | Include "Do NOT rephrase user's request unless semantics change" | Warning |
+| Style alignment | Include "Style aligned to design system at hand" | Warning |
+
 #### Wording Anti-Patterns (GPT Guide Official Warnings)
 
 | Anti-Pattern | Examples | Why Problematic | Severity |

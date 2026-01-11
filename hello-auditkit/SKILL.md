@@ -1,7 +1,7 @@
 ---
 name: hello-auditkit
 description: Use this skill to audit, review, validate, or check the quality of AI assistant configurations including prompt text, prompt files, skills (SKILL.md), plugins, MCP servers, agents, hooks, memory files (AGENTS.md, CLAUDE.md, GEMINI.md), and composite configurations. Evaluates against GPT Prompting Guide best practices.
-version: 1.0.2
+version: 1.1.0
 ---
 
 <!-- ============ OUTPUT LANGUAGE CONFIGURATION ============ -->
@@ -13,7 +13,83 @@ version: 1.0.2
 
 > **IMPORTANT**: All audit output MUST be in the language specified above.
 
+<!-- ============ CRITICAL CONSTRAINTS (GPT-5.2 COMPLIANT) ============ -->
+
+<output_verbosity_spec>
+- Default audit report: Follow ref-output-format.md structure exactly
+- Progress updates: 1-2 sentences only, at major phase transitions
+- Issue descriptions: Concise, with line numbers and evidence
+- Do NOT add lengthy explanations where tables suffice
+- Do NOT rephrase user's request unless it changes semantics
+</output_verbosity_spec>
+
+<design_and_scope_constraints>
+- Audit EXACTLY and ONLY what user provides (file, directory, or pasted text)
+- Do NOT add unrequested checks or recommendations
+- Do NOT apply fixes without explicit user confirmation
+- If audit target ambiguous, ask for clarification rather than guessing
+- Respect the 5-Point Verification: discard issues that fail any check
+</design_and_scope_constraints>
+
+<user_updates_spec>
+- Send brief updates (1-2 sentences) only when:
+  - Starting a new major phase (Detection, Universal Checks, Type-Specific, Report)
+  - Discovering something that changes the audit approach
+- Avoid narrating routine file reads or check executions
+- Each update must include concrete outcome ("Found X issues", "Loaded Y rules")
+- Do NOT expand the audit beyond what user requested
+</user_updates_spec>
+
+<uncertainty_and_ambiguity>
+- If audit target unclear: ask 1-3 clarifying questions
+- If rule interpretation ambiguous: choose simplest valid interpretation
+- Never fabricate line numbers, file names, or issue details
+- Use hedging language for uncertain assessments: "appears to", "may indicate"
+- Base all findings on actual content examined
+</uncertainty_and_ambiguity>
+
+<tool_usage_rules>
+- When scanning multiple files or checking multiple dimensions, parallelize independent read operations
+- Prefer tools over internal knowledge for fresh data
+- After writes, restate: what changed, where, validation performed
+</tool_usage_rules>
+
+<long_context_handling>
+- For audits involving multiple reference files, produce internal outline of key sections first
+- Re-state user constraints before generating report
+- Anchor findings to specific file:line references
+</long_context_handling>
+
+<report_output_spec>
+Section 2 Cross-Cutting - GPT Guide Compliance MUST appear FIRST.
+
+Section 3.1 Confirmed Issues - MUST use markdown table:
+| # | File | Line | Issue Summary | Dimension | Fix Type |
+Group by severity: 🔴 → 🟡 → 🟢, each as separate table.
+
+Section 3.2 Filtered Issues - MUST use markdown table:
+| # | File | Line | Issue Description | Filter Reason |
+
+Section 4 Fix Proposals - MUST include for EVERY confirmed issue:
+Location, Problem, Impact, Current (code block), Proposal (code block).
+
+Section 5 Conclusion - PHASE GATE:
+After outputting, STOP and wait for user input. Do NOT apply fixes until user confirms.
+</report_output_spec>
+
+<!-- ============================================================== -->
+
 # Hello-AuditKit: AI Coding Assistant Audit System
+
+## Table of Contents
+
+- [Entry Point](#entry-point)
+- [Overview](#overview)
+- [Core Principles](#core-principles)
+- [Audit Execution](#audit-execution)
+- [Reference Files](#reference-files)
+- [Special Reminders](#special-reminders)
+- [External Documentation](#external-documentation)
 
 ## Entry Point
 
@@ -78,33 +154,61 @@ Comprehensive audit system for AI coding assistant configurations:
 | Constraint centralization | Critical rules concentrated, not scattered >3 locations | Severe |
 | Prohibition language | Strong language for critical constraints | Warning |
 | No fabrication | Grounding instruction for factual tasks | Severe |
+| **XML structure enforcement** | XML tags wrap critical constraints (GPT-5.2+) | Severe |
 
-**Audit output**: Report GPT Guide Compliance status with evidence for each check.
+**XML Tags Compliance (GPT-5.2 MANDATORY)**:
 
-### Principle 1: 4-Point Verification
+> **CRITICAL**: For agentic/multi-phase prompts, XML tags are REQUIRED to prevent format drift. This is a **strict audit rule**.
+
+| Prompt Type | Required XML Tags | Severity if Missing |
+|-------------|-------------------|---------------------|
+| All with verbosity rules | `<output_verbosity_spec>` | Severe |
+| All with scope rules | `<design_and_scope_constraints>` | Severe |
+| Agentic/multi-phase | `<user_updates_spec>` | Severe |
+| Data extraction | `<extraction_spec>` | Severe |
+| Factual/grounding | `<uncertainty_and_ambiguity>` | Severe |
+| Tool-using | `<tool_usage_rules>` | Warning |
+| Long-context (>10k) | `<long_context_handling>` | Warning |
+| High-risk content | `<high_risk_self_check>` | Warning |
+
+**Audit output**: Report GPT Guide Compliance status with evidence for each check, including XML tags compliance.
+
+### Principle 1: GPT-5.2 Specific Checks (For GPT-5.2+ Prompts)
+
+> **Source**: GPT-5.2 Prompting Guide - Key Behavioral Differences
+
+| Check | What to Look For | Severity |
+|-------|------------------|----------|
+| No task expansion | "Do NOT expand beyond user request" present | Severe |
+| No rephrasing | "Do NOT rephrase user's request" present | Warning |
+| Design system exploration | "Explore existing design systems" instruction | Warning |
+| Style alignment | "Style aligned to design system" instruction | Warning |
+| Explicit preferences | Style preferences articulated (not assumed) | Warning |
+
+### Principle 2: 5-Point Verification
 
 Before marking ANY issue, verify:
 1. **Concrete Scenario** - Can describe specific failure?
 2. **Design Scope** - Within intended boundaries?
-2b. **Functional Capability** - Can it actually do what it claims? (Requires domain knowledge first)
-3. **Flaw vs Choice** - Unintentional error or valid choice?
-4. **Threshold Met** - Above quantified threshold?
+3. **Functional Capability** - Can it actually do what it claims? (Requires domain knowledge first)
+4. **Flaw vs Choice** - Unintentional error or valid choice?
+5. **Threshold Met** - Above quantified threshold?
 
 If ANY fails → Discard the issue
 
-### Principle 2: Occam's Razor
+### Principle 3: Occam's Razor
 
 **"If unnecessary, don't add."**
 
 Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 
-### Principle 3: AI Capability
+### Principle 4: AI Capability
 
 - AI CAN infer: synonyms, context, standard terms
 - AI CANNOT: 3+ step inference, domain-specific variations
 - If <30% would misunderstand → exempt from issue
 
-### Principle 4: Size Tolerance (SKILL.md body only)
+### Principle 5: Size Tolerance (SKILL.md body only)
 
 | Range | Status |
 |-------|--------|
@@ -115,7 +219,7 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 
 > **Note**: Reference files have no official line limit. Evaluate based on content nature.
 
-### Principle 5: Prompt Compliance
+### Principle 6: Prompt Compliance
 
 **For prompts/instructions, verify critical checks** (see `type-prompt.md` → Prompt Compliance Checks):
 - Verbosity constraints (Severe)
@@ -123,7 +227,7 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
 - No fabrication instruction (Severe)
 - Output schema for structured tasks (Warning)
 
-### Principle 6: Grounding & No Fabrication
+### Principle 7: Grounding & No Fabrication
 
 - Base all findings on actual content examined
 - Never fabricate line numbers, file names, or issue details
@@ -151,10 +255,16 @@ Fix Priority: DELETE > MERGE > RESTRUCTURE > MODIFY > ADD
    - **Long-context handling**: Outline + constraint restatement for >10k tokens?
    - **Tool preference**: Tools over internal knowledge for fresh data?
    - **Agentic updates**: Brief (1-2 sentences) at major phases only?
-4. Cross-validate with built-in checks in `type-prompt.md`
-5. **Flag as Severe** if audited content violates any mandatory check above
+   - **XML structure enforcement** (GPT-5.2+): XML tags wrap critical constraints?
+4. **XML Tags Compliance Check** (STRICT RULE):
+   - Identify prompt type: agentic, extraction, factual, tool-using, long-context, high-risk
+   - Check for required XML tags per type (see Principle 0 table)
+   - If XML tags missing for applicable type → Flag as Severe
+   - Required tags: `<output_verbosity_spec>`, `<design_and_scope_constraints>`, `<user_updates_spec>`, `<extraction_spec>`, `<uncertainty_and_ambiguity>`, `<tool_usage_rules>`, `<long_context_handling>`, `<high_risk_self_check>`
+5. Cross-validate with built-in checks in `type-prompt.md`
+6. **Flag as Severe** if audited content violates any mandatory check above
 
-**Evidence Output**: Note guide version fetched, list mandatory checks applied, note any violations found.
+**Evidence Output**: Note guide version fetched, list mandatory checks applied (including XML tags), note any violations found.
 
 **If WebFetch fails**: Retry before falling back to offline mode. If still fails, use built-in checks in `type-prompt.md`, note "offline mode - [error reason]" in report.
 
@@ -192,7 +302,7 @@ Execute each check from Principle 0 table, record status and evidence (line numb
 | Rule Logic | If rules exist: (1) no conflicts, (2) no duplicates/semantic equivalents, (3) coverage complete, (4) optimization opportunities (DELETE > MERGE > MODIFY) | "Checked N rules: M conflicts, K duplicates, L gaps" |
 | Process Logic | If process/flow defined: (1) all scenarios covered, (2) main flow clear, (3) no dead loops, (4) no conflicting invocations | "Process: N scenarios, M flow issues" |
 | Output & i18n | If output format defined: (1) format specification complete, (2) language control correct (if i18n configured), (3) no hardcoded language-specific content | "Output: N format issues, M i18n issues" |
-| Prompt Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims, (6) Tool preference over internal knowledge, (7) Agentic updates brief with concrete outcomes, (8) Long-context outline for >10k tokens | "Prompt: N verbosity, M scope, K grounding, L tool, P agentic issues" |
+| Prompt Compliance | (1) Verbosity constraints present, (2) Scope boundaries with "do not" list, (3) No fabrication instruction, (4) Output schema for structured tasks, (5) Grounding for uncertain claims, (6) Tool preference over internal knowledge, (7) Agentic updates brief with concrete outcomes, (8) Long-context outline for >10k tokens, (9) **XML tags for critical constraints** (GPT-5.2+) | "Prompt: N verbosity, M scope, K grounding, L tool, P agentic, Q XML issues" |
 | Conversational/Multi-Phase | If content has phases: (1) constraints at TOP, (2) explicit stop conditions, (3) scope drift prevention, (4) phase gates, (5) **constraint centralization** (rules in ≤3 locations), (6) **stop condition strength** (strong vs weak), (7) **prohibition language strength** ("禁止/Do NOT" vs "不要/don't") | "Conversational: N issues (centralization: X, stop strength: Y, prohibition: Z)" |
 
 **Numbering Check Execution** (commonly missed):
@@ -212,6 +322,7 @@ Execute each check from Principle 0 table, record status and evidence (line numb
 | Content Quality | Specific instructions? Not vague? |
 | LLM Best Practices | Freedom level match? Grounding? Ambiguity handling? |
 | Prompt Compliance | Verbosity limits? "Do not" list? No fabrication? Schema? Self-check? |
+| **XML Structure Enforcement** | XML tags for verbosity? scope? extraction? updates? (GPT-5.2+) |
 | Conversational/Multi-Phase | If has phases: constraints at TOP? Stop conditions (strong)? Scope drift prevention? Phase gates? **Constraint centralization?** **Prohibition language strength?** |
 | Audit Checklist | Execute all Fatal/Severe/Warning checks at end of file |
 
@@ -273,20 +384,20 @@ Execute each check from Principle 0 table, record status and evidence (line numb
 | Numbering Consistency | Sequential across all files? No duplicates? |
 | Script Integrity | All declared scripts exist? Imports valid? |
 
-### Step 5: Issue Verification (4-Point Check)
+### Step 5: Issue Verification (5-Point Check)
 
 For each suspected issue, verify ALL points:
 1. **Concrete scenario** - Can describe specific failure?
 2. **Design scope** - Within intended boundaries?
-2b. **Functional capability** - Does implementation match claimed capability?
-3. **Flaw vs choice** - Unintentional error or valid design?
-4. **Threshold met** - Above quantified threshold?
+3. **Functional capability** - Does implementation match claimed capability?
+4. **Flaw vs choice** - Unintentional error or valid design?
+5. **Threshold met** - Above quantified threshold?
 
 If ANY fails → Discard the issue (move to Filtered)
 
 **For "missing/incomplete" issues**: Re-read the source content fully before confirming. ASCII diagrams are prone to parsing errors on first scan.
 
-### Step 5b: Fix Proposal Verification (Principle Check)
+### Step 6: Fix Proposal Verification (Principle Check)
 
 **CRITICAL**: Before outputting ANY fix proposal, verify it against core principles:
 
@@ -305,7 +416,7 @@ If ANY fails → Discard the issue (move to Filtered)
 
 **If ANY check fails → Revise or discard the fix proposal**
 
-### Step 6: Generate Report
+### Step 7: Generate Report
 
 Follow `references/ref-output-format.md` for structure.
 
@@ -319,7 +430,7 @@ Follow `references/ref-output-format.md` for structure.
 - Verification Statistics: "Scanned X → Verified Y → Filtered Z"
 - Both Confirmed and Filtered issues with filter reasons
 
-### Step 7: Wait for User Confirmation (PHASE GATE)
+### Step 8: Wait for User Confirmation (PHASE GATE)
 
 > **CRITICAL**: After generating the report, STOP and wait for user input. Do NOT apply any fixes automatically.
 

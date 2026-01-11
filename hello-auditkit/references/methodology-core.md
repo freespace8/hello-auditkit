@@ -16,7 +16,7 @@
 
 ## Table of Contents
 
-- [4-Point Core Verification](#4-point-core-verification)
+- [5-Point Core Verification](#5-point-core-verification)
 - [Occam's Razor: Correct Application](#occams-razor-correct-application)
 - [Conciseness Principle](#conciseness-principle)
 - [Freedom Level Matching](#freedom-level-matching)
@@ -26,9 +26,9 @@
 
 ---
 
-## 4-Point Core Verification
+## 5-Point Core Verification
 
-**Before marking ANY issue, it MUST pass all 4 checks:**
+**Before marking ANY issue, it MUST pass all 5 checks:**
 
 ### Check 1: Concrete Scenario Test
 
@@ -44,7 +44,7 @@
 |----------|---------------|
 | Is this scenario within the design scope? | Exclude extreme edge cases, theoretical possibilities |
 | If NO → Not an issue, discard | |
-| If YES → Continue to Check 2b | |
+| If YES → Continue to Check 3 | |
 
 **CRITICAL**: Before applying any audit rule, first understand the audited content's:
 - **Core purpose**: What is it designed to do?
@@ -53,7 +53,7 @@
 
 Only then judge whether the audit rule applies to this specific content.
 
-### Check 2b: Functional Capability Audit
+### Check 3: Functional Capability Audit
 
 **CRITICAL PREREQUISITE**: Before evaluating functional capability, the auditor MUST first understand the target domain. For domain-specific skills, acquire domain knowledge (via WebSearch, references, or user input) before assessment.
 
@@ -82,16 +82,16 @@ Only then judge whether the audit rule applies to this specific content.
 2. Then evaluate whether its implementation can actually achieve that
 3. If gap exists between claimed capability and actual capability → Flag as functional deficiency
 
-### Check 3: Design Intent Judgment
+### Check 4: Design Intent Judgment
 
 | Question | Pass Criteria |
 |----------|---------------|
 | Is this a design flaw or a design choice? | Can you find a reasonable design rationale? |
 | If design choice (intentional) → Not an issue, discard | |
-| If design flaw (unintentional error) → Continue to Check 4 | |
+| If design flaw (unintentional error) → Continue to Check 5 | |
 | **Note**: Missing necessary constraints is NOT a design choice | If ≥30% would misunderstand, still flag |
 
-### Check 4: Negative Consequence Assessment
+### Check 5: Negative Consequence Assessment
 
 | Issue Type | Threshold |
 |------------|-----------|
@@ -375,7 +375,7 @@ Despite the "ADD as last resort" principle, the following are considered **neces
 
 | Principle | Key Point |
 |-----------|-----------|
-| **4-Point Check** | All issues must pass 4 verification steps |
+| **5-Point Check** | All issues must pass 5 verification steps |
 | **Occam's Razor** | "If necessary" is the key, not "fewer is better" |
 | **AI Trust** | AI can infer most things from context and examples |
 | **Fix Hierarchy** | DELETE > MERGE > RESTRUCTURE > MODIFY > ADD |
